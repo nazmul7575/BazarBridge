@@ -1,0 +1,796 @@
+{% liquid
+  assign section_id = 'ts-vs-orig-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="ts-vs-section"
+  style="
+    --ts-bg: {{ section.settings.background_color }};
+    --ts-top: {{ section.settings.padding_top }}px;
+    --ts-bottom: {{ section.settings.padding_bottom }}px;
+    --ts-max: {{ section.settings.content_width }}px;
+    --ts-brand-green: {{ section.settings.brand_green }};
+    --ts-brand-green-hover: {{ section.settings.brand_green_hover }};
+    --ts-row-icon-w: {{ section.settings.row_icon_width }}px;
+    --ts-row-icon-h: {{ section.settings.row_icon_height }}px;
+    
+    /* Trust Badge Typography & Icon Styles */
+    --ts-trust-icon-w: {{ section.settings.trust_icon_width }}px;
+    --ts-trust-icon-h: {{ section.settings.trust_icon_height }}px;
+    --ts-trust-font-size: {{ section.settings.trust_font_size }}px;
+    --ts-trust-font-weight: {{ section.settings.trust_font_weight }};
+    --ts-trust-letter-spacing: {{ section.settings.trust_letter_spacing }}px;
+    --ts-trust-color: {{ section.settings.trust_text_color }};
+  "
+>
+  <div class="ts-vs-container">
+    
+    <!-- Section Heading -->
+    {% if section.settings.show_header %}
+      <div class="ts-vs-header">
+        {% if section.settings.subheading != blank %}
+          <span class="ts-vs-eyebrow">{{ section.settings.subheading | escape }}</span>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h2 class="ts-vs-title">{{ section.settings.heading | escape }}</h2>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Comparison Table Wrapper -->
+    <div class="ts-vs-table-wrapper">
+      <div class="ts-vs-table">
+        
+        <!-- Feature Labels Column (Left) -->
+        <div class="ts-vs-col ts-vs-features-col">
+          <div class="ts-vs-cell ts-vs-header-cell"></div>
+          {% for block in section.blocks %}
+            <div class="ts-vs-cell ts-vs-feature-cell" {{ block.shopify_attributes }}>
+              <strong class="ts-vs-feature-title">{{ block.settings.title | escape }}</strong>
+              {% if block.settings.description != blank %}
+                <p class="ts-vs-feature-desc">{{ block.settings.description | escape }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Middle Brand Column (Green Card) -->
+        <div class="ts-vs-col ts-vs-brand-col">
+          <div class="ts-vs-cell ts-vs-header-cell ts-vs-brand-header">
+            <span class="ts-vs-brand-title">{{ section.settings.brand_column_title | escape }}</span>
+            {% if section.settings.brand_badge != blank %}
+              <span class="ts-vs-brand-badge">{{ section.settings.brand_badge | escape }}</span>
+            {% endif %}
+          </div>
+          {% for block in section.blocks %}
+            <div class="ts-vs-cell ts-vs-brand-cell" {{ block.shopify_attributes }}>
+              {% if block.settings.brand_icon != blank %}
+                {{
+                  block.settings.brand_icon
+                  | image_url: width: 200
+                  | image_tag: loading: 'lazy', class: 'ts-custom-row-icon', alt: 'Brand icon'
+                }}
+              {% else %}
+                <span class="ts-vs-check-icon">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Competitor Column (Right) -->
+        <div class="ts-vs-col ts-vs-comp-col">
+          <div class="ts-vs-cell ts-vs-header-cell ts-vs-comp-header">
+            <span class="ts-vs-comp-title">{{ section.settings.competitor_column_title | escape }}</span>
+          </div>
+          {% for block in section.blocks %}
+            <div class="ts-vs-cell ts-vs-comp-cell" {{ block.shopify_attributes }}>
+              {% if block.settings.competitor_icon != blank %}
+                {{
+                  block.settings.competitor_icon
+                  | image_url: width: 200
+                  | image_tag: loading: 'lazy', class: 'ts-custom-row-icon', alt: 'Competitor icon'
+                }}
+              {% else %}
+                <span class="ts-vs-cross-icon">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </span>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CTA & Trust Badges Footer -->
+    <div class="ts-vs-footer">
+      {% if section.settings.button_label != blank %}
+        <a href="{{ section.settings.button_link | default: '/collections/all' }}" class="ts-vs-btn">
+          {{ section.settings.button_label | escape }}
+        </a>
+      {% endif %}
+
+      <div class="ts-vs-trust-row">
+        {% if section.settings.trust_text_1 != blank %}
+          <div class="ts-vs-trust-item">
+            {% if section.settings.trust_icon_1 != blank %}
+              {{
+                section.settings.trust_icon_1
+                | image_url: width: 100
+                | image_tag: loading: 'lazy', class: 'ts-trust-img-ic', alt: 'Trust badge 1'
+              }}
+            {% else %}
+              <span class="ts-trust-ic">⌛</span>
+            {% endif %}
+            <span>{{ section.settings.trust_text_1 | escape }}</span>
+          </div>
+        {% endif %}
+
+        {% if section.settings.trust_text_2 != blank %}
+          <div class="ts-vs-trust-item">
+            {% if section.settings.trust_icon_2 != blank %}
+              {{
+                section.settings.trust_icon_2
+                | image_url: width: 100
+                | image_tag: loading: 'lazy', class: 'ts-trust-img-ic', alt: 'Trust badge 2'
+              }}
+            {% else %}
+              <span class="ts-trust-ic">♡</span>
+            {% endif %}
+            <span>{{ section.settings.trust_text_2 | escape }}</span>
+          </div>
+        {% endif %}
+
+        {% if section.settings.trust_text_3 != blank %}
+          <div class="ts-vs-trust-item">
+            {% if section.settings.trust_icon_3 != blank %}
+              {{
+                section.settings.trust_icon_3
+                | image_url: width: 100
+                | image_tag: loading: 'lazy', class: 'ts-trust-img-ic', alt: 'Trust badge 3'
+              }}
+            {% else %}
+              <span class="ts-trust-ic">🛡️</span>
+            {% endif %}
+            <span>{{ section.settings.trust_text_3 | escape }}</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    padding: var(--ts-top) 20px var(--ts-bottom);
+    background-color: var(--ts-bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #121212;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-vs-container {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Header Styling */
+  #{{ section_id }} .ts-vs-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 36px;
+  }
+
+  #{{ section_id }} .ts-vs-eyebrow {
+    color: #137c44;
+    font-size: 16px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 0.8px;
+  }
+
+  #{{ section_id }} .ts-vs-title {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 40px;
+    color: #121212;
+  }
+
+  /* Table Grid Layout */
+  #{{ section_id }} .ts-vs-table-wrapper {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  #{{ section_id }} .ts-vs-table {
+    display: grid;
+    grid-template-columns: 2.2fr 1.2fr 1.2fr;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  /* Column Structure */
+  #{{ section_id }} .ts-vs-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #{{ section_id }} .ts-vs-cell {
+    min-height: 68px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 10px 12px;
+  }
+
+  /* Header Row Heights & Dividers */
+  #{{ section_id }} .ts-vs-header-cell {
+    min-height: 72px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  /* Left Column Features */
+  #{{ section_id }} .ts-vs-features-col .ts-vs-feature-cell {
+    padding-left: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  #{{ section_id }} .ts-vs-feature-title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    color: #000000;
+    display: block;
+    letter-spacing: 0.6px;
+    margin-bottom: 2px;
+  }
+
+  #{{ section_id }} .ts-vs-feature-desc {
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.06rem;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  /* MIDDLE COLUMN: Green Card */
+  #{{ section_id }} .ts-vs-brand-col {
+    background-color: var(--ts-brand-green);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: -12px;
+    margin-bottom: -12px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    box-shadow: 0 4px 20px rgba(16, 122, 66, 0.15);
+  }
+
+  #{{ section_id }} .ts-vs-brand-header {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  #{{ section_id }} .ts-vs-brand-title {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 900;
+  }
+
+  #{{ section_id }} .ts-vs-brand-badge {
+    background: #ffffff1a;
+    color: #8dffcf;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  #{{ section_id }} .ts-vs-brand-cell {
+    justify-content: center;
+    border-bottom: 1px solid #12121233;
+  }
+
+  #{{ section_id }} .ts-vs-check-icon {
+    width: var(--ts-row-icon-w);
+    height: var(--ts-row-icon-h);
+    background-color: #2fcc8a;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Right Competitor Column */
+  #{{ section_id }} .ts-vs-comp-header {
+    justify-content: center;
+  }
+
+  #{{ section_id }} .ts-vs-comp-title {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 900;
+    color: rgb(18, 18, 18);
+  }
+
+  #{{ section_id }} .ts-vs-comp-cell {
+    justify-content: center;
+  }
+
+  #{{ section_id }} .ts-vs-cross-icon {
+    width: var(--ts-row-icon-w);
+    height: var(--ts-row-icon-h);
+    font-weight: 900;
+    border: 2px solid #E24B4A;
+    color: #E24B4A;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+  }
+
+  /* Custom Uploaded Row Icons */
+  #{{ section_id }} .ts-custom-row-icon {
+    width: var(--ts-row-icon-w);
+    height: var(--ts-row-icon-h);
+    object-fit: contain;
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Footer Section */
+  #{{ section_id }} .ts-vs-footer {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  #{{ section_id }} .ts-vs-btn {
+    width: 75%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ts-brand-green);
+    color: #ffffff;
+    padding: 16px 36px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  #{{ section_id }} .ts-vs-btn:hover {
+    background-color: var(--ts-brand-green-hover);
+  }
+
+  #{{ section_id }} .ts-vs-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(16, 122, 66, 0.2);
+  }
+
+  /* Trust Indicators Row & Text Typography Styles */
+  #{{ section_id }} .ts-vs-trust-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-size: var(--ts-trust-font-size);
+    font-weight: var(--ts-trust-font-weight);
+    letter-spacing: var(--ts-trust-letter-spacing);
+    color: var(--ts-trust-color);
+  }
+
+  #{{ section_id }} .ts-vs-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #{{ section_id }} .ts-trust-img-ic {
+    width: var(--ts-trust-icon-w);
+    height: var(--ts-trust-icon-h);
+    object-fit: contain;
+    display: inline-block;
+  }
+
+  /* Mobile Layout */
+  @media screen and (max-width: 640px) {
+    #{{ section_id }} .ts-vs-title {
+      font-size: 22px;
+    }
+
+    #{{ section_id }} .ts-vs-table {
+      grid-template-columns: 1.8fr 1fr 1fr;
+    }
+
+    #{{ section_id }} .ts-vs-feature-title {
+      font-size: 12px;
+    }
+
+    #{{ section_id }} .ts-vs-feature-desc {
+      font-size: 10px;
+    }
+
+    #{{ section_id }} .ts-vs-btn {
+      width: 100%;
+      padding: 16px 24px;
+    }
+
+    #{{ section_id }} .ts-vs-trust-row {
+      flex-direction: column;
+      gap: 6px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "TryScent Vs Original",
+  "tag": "section",
+  "class": "section-tryscent-vs-original",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Titles"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show Main Header",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading Eyebrow",
+      "default": "Oss vs. original"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Main Heading",
+      "default": "Du kan jämföra doft. Du bör också jämföra matematik."
+    },
+    {
+      "type": "header",
+      "content": "Column Names"
+    },
+    {
+      "type": "text",
+      "id": "brand_column_title",
+      "label": "Brand Title",
+      "default": "Våra dofter"
+    },
+    {
+      "type": "text",
+      "id": "brand_badge",
+      "label": "Brand Badge Text",
+      "default": "19-21% koncentration"
+    },
+    {
+      "type": "text",
+      "id": "competitor_column_title",
+      "label": "Competitor Title",
+      "default": "Designermärken"
+    },
+    {
+      "type": "header",
+      "content": "Row Icon Size Settings"
+    },
+    {
+      "type": "range",
+      "id": "row_icon_width",
+      "label": "Row Icon Width",
+      "min": 12,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "row_icon_height",
+      "label": "Row Icon Height",
+      "min": 12,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Trust Badge Icons & Settings"
+    },
+    {
+      "type": "range",
+      "id": "trust_icon_width",
+      "label": "Trust Badge Icon Width",
+      "min": 10,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "trust_icon_height",
+      "label": "Trust Badge Icon Height",
+      "min": 10,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "trust_font_size",
+      "label": "Trust Text Font Size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "trust_font_weight",
+      "label": "Trust Text Font Weight",
+      "options": [
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semi-Bold (600)" },
+        { "value": "700", "label": "Bold (700)" },
+        { "value": "800", "label": "Extra Bold (800)" },
+        { "value": "900", "label": "Black (900)" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "trust_letter_spacing",
+      "label": "Trust Text Letter Spacing",
+      "min": 0,
+      "max": 3,
+      "step": 0.1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "trust_text_color",
+      "label": "Trust Text Color",
+      "default": "#4B5563"
+    },
+    {
+      "type": "image_picker",
+      "id": "trust_icon_1",
+      "label": "Trust Badge Icon 1"
+    },
+    {
+      "type": "text",
+      "id": "trust_text_1",
+      "label": "Trust Indicator 1",
+      "default": "Håller i 12+ timmar"
+    },
+    {
+      "type": "image_picker",
+      "id": "trust_icon_2",
+      "label": "Trust Badge Icon 2"
+    },
+    {
+      "type": "text",
+      "id": "trust_text_2",
+      "label": "Trust Indicator 2",
+      "default": "älskad av 10 000+"
+    },
+    {
+      "type": "image_picker",
+      "id": "trust_icon_3",
+      "label": "Trust Badge Icon 3"
+    },
+    {
+      "type": "text",
+      "id": "trust_text_3",
+      "label": "Trust Indicator 3",
+      "default": "60 dagars nöjdhetsgaranti"
+    },
+    {
+      "type": "header",
+      "content": "Call To Action Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Bläddra bland fler dofter"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Theme Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background",
+      "default": "#FAFAFA"
+    },
+    {
+      "type": "color",
+      "id": "brand_green",
+      "label": "Brand Green Color",
+      "default": "#107A42"
+    },
+    {
+      "type": "color",
+      "id": "brand_green_hover",
+      "label": "Brand Green Hover",
+      "default": "#0B5F33"
+    },
+    {
+      "type": "header",
+      "content": "Layout Width and Spacing"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Max Container Width",
+      "min": 700,
+      "max": 1200,
+      "step": 20,
+      "unit": "px",
+      "default": 960
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "comparison_row",
+      "name": "Comparison Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Feature Title",
+          "default": "Parfymkoncentration"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Feature Subtitle",
+          "default": "Mer olja = längre hållbarhet"
+        },
+        {
+          "type": "header",
+          "content": "Custom Row Icons"
+        },
+        {
+          "type": "image_picker",
+          "id": "brand_icon",
+          "label": "Brand Column Icon"
+        },
+        {
+          "type": "image_picker",
+          "id": "competitor_icon",
+          "label": "Competitor Column Icon"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent Vs Original",
+      "blocks": [
+        {
+          "type": "comparison_row",
+          "settings": {
+            "title": "Parfymkoncentration",
+            "description": "Mer olja = längre hållbarhet"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "title": "Håller 8–12 timmar på huden",
+            "description": "Håller längre än de flesta designer-EDT"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "title": "90% billigare än designerpriset",
+            "description": "Utan att kompromissa med kvaliteten"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "title": "Exakt samma doft som originalet",
+            "description": "Skapad med samma doftackord"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "title": "Skickas inom 24 timmar",
+            "description": "Inget väntande i butik"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "title": "Djurförsöksfri formula",
+            "description": "Rena ingredienser, säkra för huden"
+          }
+        },
+        {
+          "type": "comparison_row",
+          "settings": {
+            "title": "60 dagars pengarna-tillbaka-garanti",
+            "description": "Älska den eller få full återbetalning — inga frågor"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

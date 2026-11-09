@@ -1,0 +1,440 @@
+{% liquid
+  assign section_id = 'ts-eu-standards-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="ts-eu-standards"
+  style="
+    --ts-bg: {{ section.settings.background_color }};
+    --ts-top: {{ section.settings.padding_top }}px;
+    --ts-bottom: {{ section.settings.padding_bottom }}px;
+    --ts-max: {{ section.settings.content_width }}px;
+    --ts-heading-size: {{ section.settings.heading_size }}px;
+    --ts-heading-color: {{ section.settings.heading_color }};
+    
+    /* Typography & Color Variables */
+    --ts-text-size: {{ section.settings.text_size }}px;
+    --ts-text-line-height: {{ section.settings.text_line_height }};
+    --ts-text-weight: {{ section.settings.text_font_weight }};
+    --ts-text-letter-spacing: {{ section.settings.text_letter_spacing }}px;
+    --ts-text-color: {{ section.settings.text_color }};
+    --ts-img-radius: {{ section.settings.image_radius }}px;
+  "
+>
+  <div class="ts-eu-standards__inner">
+    <!-- Left Text Content -->
+    <div class="ts-eu-standards__content">
+      {% if section.settings.heading != blank %}
+        <h2 class="ts-eu-standards__heading">
+          {{ section.settings.heading | escape }}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.description != blank %}
+        <p class="ts-eu-standards__description">
+          {{ section.settings.description | escape }}
+        </p>
+      {% endif %}
+
+      <!-- Dynamic Blocks Area (Paragraphs & Bullet Points) -->
+      {% if section.blocks.size > 0 %}
+        <div class="ts-eu-standards__blocks">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'paragraph' %}
+                {% if block.settings.text != blank %}
+                  <p class="ts-eu-standards__paragraph-block" {{ block.shopify_attributes }}>
+                    {{ block.settings.text | escape }}
+                  </p>
+                {% endif %}
+
+              {% when 'bullet_point' %}
+                <ul class="ts-eu-standards__list" {{ block.shopify_attributes }}>
+                  <li class="ts-eu-standards__item">
+                    {% if block.settings.title != blank %}
+                      <strong>{{ block.settings.title | escape }}:</strong>
+                    {% endif %}
+                    {{ block.settings.text | escape }}
+                  </li>
+                </ul>
+            {% endcase %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Right Image -->
+    <div class="ts-eu-standards__image-wrapper">
+      {% if section.settings.image != blank %}
+        {{
+          section.settings.image
+          | image_url: width: 1200
+          | image_tag:
+            loading: 'lazy',
+            class: 'ts-eu-standards__image',
+            alt: section.settings.image.alt | default: section.settings.heading
+        }}
+      {% else %}
+        <div class="ts-eu-standards__placeholder">
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    background: var(--ts-bg);
+    padding: var(--ts-top) 24px var(--ts-bottom);
+    font-family: inherit;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-eu-standards__inner {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+  }
+
+  /* Left Column: Text Content */
+  #{{ section_id }} .ts-eu-standards__content {
+    flex: 1;
+    max-width: 520px;
+  }
+
+  #{{ section_id }} .ts-eu-standards__heading {
+    color: var(--ts-heading-color);
+    font-size: var(--ts-heading-size);
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    line-height: 1.3;
+    margin: 0 0 20px;
+  }
+
+  /* Main Description */
+  #{{ section_id }} .ts-eu-standards__description {
+    color: var(--ts-text-color);
+    font-size: var(--ts-text-size);
+    line-height: var(--ts-text-line-height);
+    font-weight: var(--ts-text-weight);
+    letter-spacing: var(--ts-text-letter-spacing);
+    margin: 0 0 20px;
+  }
+
+  /* Dynamic Blocks Wrapper */
+  #{{ section_id }} .ts-eu-standards__blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Custom Paragraph Block */
+  #{{ section_id }} .ts-eu-standards__paragraph-block {
+    width: 70%;
+    color: var(--ts-text-color);
+    font-size: var(--ts-text-size);
+    line-height: var(--ts-text-line-height);
+    font-weight: var(--ts-text-weight);
+    letter-spacing: var(--ts-text-letter-spacing);
+    margin: 0;
+  }
+
+  /* Bullet List Item */
+  #{{ section_id }} .ts-eu-standards__list {
+    margin: 0;
+    padding-left: 18px;
+    list-style-type: disc;
+  }
+
+  #{{ section_id }} .ts-eu-standards__item {
+    color: var(--ts-text-color);
+    font-size: var(--ts-text-size);
+    line-height: var(--ts-text-line-height);
+    font-weight: var(--ts-text-weight);
+    letter-spacing: var(--ts-text-letter-spacing);
+  }
+
+  #{{ section_id }} .ts-eu-standards__item strong {
+    color: rgba(94, 94, 94, 1);
+    font-weight: 700;
+  }
+
+  /* Right Column: Image */
+  #{{ section_id }} .ts-eu-standards__image-wrapper {
+    flex: 1;
+    max-width: 520px;
+    width: 100%;
+  }
+
+  #{{ section_id }} .ts-eu-standards__image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    border-radius: var(--ts-img-radius);
+  }
+
+  #{{ section_id }} .ts-eu-standards__placeholder {
+    width: 100%;
+    background: #f3f4f6;
+    border-radius: var(--ts-img-radius);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+  }
+
+  #{{ section_id }} .ts-eu-standards__placeholder svg {
+    width: 100%;
+    height: 100%;
+    max-height: 350px;
+  }
+
+  /* Responsive Mobile Layout */
+  @media screen and (max-width: 890px) {
+    #{{ section_id }} .ts-eu-standards__inner {
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    #{{ section_id }} .ts-eu-standards__content,
+    #{{ section_id }} .ts-eu-standards__image-wrapper {
+      max-width: 100%;
+    }
+
+    #{{ section_id }} .ts-eu-standards__heading {
+      font-size: calc(var(--ts-heading-size) * 0.85);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "TryScent EU Standards",
+  "tag": "section",
+  "class": "section-tryscent-eu-standards",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Text Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Vad innebär det att en doft tillverkas i EU?"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Main Description",
+      "default": "Vi tillverkar alla våra parfymer enligt EU:s strikta kosmetikastandarder. Det betyder att du får en produkt som är lika säker för din hud som den är lyxig för dina sinnen."
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Section Image"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image Corner Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Typography & Colors"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading Font Size",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Body / Bullet Text Font Size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "label": "Text Line Height",
+      "min": 1,
+      "max": 2.2,
+      "step": 0.1,
+      "default": 1.6
+    },
+    {
+      "type": "select",
+      "id": "text_font_weight",
+      "label": "Text Font Weight",
+      "options": [
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semi-Bold (600)" },
+        { "value": "700", "label": "Bold (700)" },
+        { "value": "800", "label": "Extra Bold (800)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "text_letter_spacing",
+      "label": "Text Letter Spacing",
+      "min": 0,
+      "max": 3,
+      "step": 0.1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#4A5568"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1040
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "bullet_point",
+      "name": "Bullet Point",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Bold Prefix",
+          "default": "Strikta säkerhetskrav"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Bullet Text",
+          "default": "Vi använder uteslutande ingredienser godkända av IFRA, vilket garanterar att doften är skonsam och säker att bära."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "name": "Paragraph",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Paragraph Text",
+          "default": "Skriv ytterligare beskrivande text här för din sektion."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent EU Standards",
+      "blocks": [
+        {
+          "type": "bullet_point",
+          "settings": {
+            "title": "Strikta säkerhetskrav",
+            "text": "Vi använder uteslutande ingredienser godkända av IFRA, vilket garanterar att doften är skonsam och säker att bära."
+          }
+        },
+        {
+          "type": "bullet_point",
+          "settings": {
+            "title": "Inga billigagenvägar",
+            "text": "Inga billiga utspädningar eller tveksamma kemikalier från gråzoner utanför Europa."
+          }
+        },
+        {
+          "type": "bullet_point",
+          "settings": {
+            "title": "Certifierade anläggningar",
+            "text": "Varje flaska blandas och fylls i kontrollerade, europeiska laboratorier med full spårbarhet."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

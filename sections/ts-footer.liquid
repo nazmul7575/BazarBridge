@@ -1,0 +1,459 @@
+{% liquid
+  assign section_id = 'ts-footer-' | append: section.id
+%}
+
+<footer
+  id="{{ section_id }}"
+  class="ts-footer"
+  style="
+    --ts-bg: {{ section.settings.background_color }};
+    --ts-top: {{ section.settings.padding_top }}px;
+    --ts-bottom: {{ section.settings.padding_bottom }}px;
+    --ts-max: {{ section.settings.content_width }}px;
+    --ts-text-color: {{ section.settings.text_color }};
+    --ts-heading-color: {{ section.settings.heading_color }};
+    --ts-link-hover: {{ section.settings.link_hover_color }};
+  "
+>
+  <div class="ts-footer__inner">
+    <!-- Brand Logo Column -->
+    <div class="ts-footer__brand">
+      <div class="ts-footer__logo">
+        {% if section.settings.logo != blank %}
+          {{
+            section.settings.logo
+            | image_url: width: 300
+            | image_tag: loading: 'lazy', class: 'ts-footer__logo-img', alt: shop.name
+          }}
+        {% else %}
+          <div class="ts-footer__logo-text">
+            <span class="ts-logo-symbol">S</span>
+            <span class="ts-logo-word">SCENT</span>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if section.settings.show_shop_follow %}
+        <div class="ts-footer__follow">
+          <a
+            href="{{ section.settings.shop_follow_url | default: '#' }}"
+            class="ts-footer__shop-btn"
+            target="_blank"
+            rel="noopener"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            {{ section.settings.shop_follow_label | escape }}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Navigation Column 1: Om oss -->
+    <div class="ts-footer__col">
+      <h3 class="ts-footer__title">{{ section.settings.menu_1_title | escape }}</h3>
+      {% if section.settings.menu_1 != blank %}
+        <ul class="ts-footer__menu">
+          {% for link in section.settings.menu_1.links %}
+            <li>
+              <a href="{{ link.url }}">{{ link.title | escape }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <ul class="ts-footer__menu">
+          <li><a href="#">Om</a></li>
+          <li><a href="#">Bloggar</a></li>
+          <li><a href="#">Handla</a></li>
+          <li><a href="#">Män</a></li>
+          <li><a href="#">Kvinnor</a></li>
+          <li><a href="#">Bästa erbjudandet</a></li>
+        </ul>
+      {% endif %}
+    </div>
+
+    <!-- Navigation Column 2: Information -->
+    <div class="ts-footer__col">
+      <h3 class="ts-footer__title">{{ section.settings.menu_2_title | escape }}</h3>
+      {% if section.settings.menu_2 != blank %}
+        <ul class="ts-footer__menu">
+          {% for link in section.settings.menu_2.links %}
+            <li>
+              <a href="{{ link.url }}">{{ link.title | escape }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <ul class="ts-footer__menu">
+          <li><a href="#">Integritetspolicy</a></li>
+          <li><a href="#">Användarvillkor</a></li>
+          <li><a href="#">Återbetalning och returer</a></li>
+          <li><a href="#">Leveranspolicy</a></li>
+          <li><a href="#">Frånträd avtal här</a></li>
+          <li><a href="#">Avbeställningspolicy</a></li>
+        </ul>
+      {% endif %}
+    </div>
+
+    <!-- Contact Details Column -->
+    <div class="ts-footer__col ts-footer__contact">
+      <h3 class="ts-footer__title">{{ section.settings.contact_title | escape }}</h3>
+      <div class="ts-footer__contact-info">
+        <p class="ts-footer__label">Driftsbolag:</p>
+        <p class="ts-footer__company"><strong>{{ section.settings.company_name | escape }}</strong></p>
+        <p class="ts-footer__address">{{ section.settings.company_address_1 | escape }}</p>
+        <p class="ts-footer__address">{{ section.settings.company_address_2 | escape }}</p>
+
+        {% if section.settings.phone != blank %}
+          <p class="ts-footer__phone">
+            <strong>Phone:</strong> <a href="tel:{{ section.settings.phone | escape }}">{{ section.settings.phone | escape }}</a>
+          </p>
+        {% endif %}
+
+        {% if section.settings.email != blank %}
+          <p class="ts-footer__email">
+            <strong>Email:</strong> <a href="mailto:{{ section.settings.email | escape }}">{{ section.settings.email | escape }}</a>
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  #{{ section_id }} {
+    background-color: var(--ts-bg);
+    color: var(--ts-text-color);
+    padding: var(--ts-top) 24px var(--ts-bottom);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-footer__inner {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1.2fr;
+    gap: 40px;
+  }
+
+  /* Logo & Follow Column */
+  #{{ section_id }} .ts-footer__brand {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 180px;
+  }
+
+  #{{ section_id }} .ts-footer__logo-img {
+    max-width: 140px;
+    height: auto;
+    display: block;
+  }
+
+  #{{ section_id }} .ts-footer__logo-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+  }
+
+  #{{ section_id }} .ts-logo-symbol {
+    font-size: 32px;
+    font-weight: 800;
+    font-family: serif;
+    line-height: 1;
+  }
+
+  #{{ section_id }} .ts-logo-word {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 4px;
+  }
+
+  /* Purple "Följ på shop" Button */
+  #{{ section_id }} .ts-footer__shop-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #5433eb;
+    color: #FFFFFF;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 16px;
+    letter-spacing: -0.05px;
+    line-height: 22px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color, background-color, border-color, text-decoration-color, fill, stroke 0.15s ease, transform 0.15s ease;
+  }
+
+  #{{ section_id }} .ts-footer__shop-btn:hover {
+    background-color: #4b27e8ff;
+  }
+
+  #{{ section_id }} .ts-footer__shop-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Column Titles */
+  #{{ section_id }} .ts-footer__title {
+    color: var(--ts-heading-color);
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 16px;
+  }
+
+  /* Navigation Links */
+  #{{ section_id }} .ts-footer__menu {
+    list-style: none;
+    padding: 5px 0px;
+    font-size: 14px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #{{ section_id }} .ts-footer__menu a {
+    color: var(--ts-text-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  #{{ section_id }} .ts-footer__menu a:hover {
+    color: var(--ts-link-hover);
+    text-decoration: underline;
+  }
+
+  /* Contact Information Details */
+  #{{ section_id }} .ts-footer__contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  #{{ section_id }} .ts-footer__contact-info p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ts-text-color);
+  }
+
+  #{{ section_id }} .ts-footer__contact-info strong {
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  #{{ section_id }} .ts-footer__contact-info a {
+    color: var(--ts-text-color);
+    text-decoration: underline;
+  }
+
+  #{{ section_id }} .ts-footer__contact-info a:hover {
+    color: var(--ts-link-hover);
+  }
+
+  /* Mobile Responsiveness */
+  @media screen and (max-width: 900px) {
+    #{{ section_id }} .ts-footer__inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+  }
+
+  @media screen and (max-width: 550px) {
+    #{{ section_id }} {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    #{{ section_id }} .ts-footer__inner {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    #{{ section_id }} .ts-footer__brand {
+      min-height: auto;
+      gap: 20px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "TryScent Footer",
+  "tag": "footer",
+  "class": "section-tryscent-footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand & Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shop_follow",
+      "label": "Show Follow on Shop Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "shop_follow_label",
+      "label": "Shop Button Label",
+      "default": "Följ på shop"
+    },
+    {
+      "type": "url",
+      "id": "shop_follow_url",
+      "label": "Shop Follow URL"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Column 1"
+    },
+    {
+      "type": "text",
+      "id": "menu_1_title",
+      "label": "Column 1 Heading",
+      "default": "Om oss"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_1",
+      "label": "Select Menu 1"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Column 2"
+    },
+    {
+      "type": "text",
+      "id": "menu_2_title",
+      "label": "Column 2 Heading",
+      "default": "Information"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_2",
+      "label": "Select Menu 2"
+    },
+    {
+      "type": "header",
+      "content": "Contact Column"
+    },
+    {
+      "type": "text",
+      "id": "contact_title",
+      "label": "Contact Column Heading",
+      "default": "Contact"
+    },
+    {
+      "type": "text",
+      "id": "company_name",
+      "label": "Company Name",
+      "default": "MAGYX SP ZOO"
+    },
+    {
+      "type": "text",
+      "id": "company_address_1",
+      "label": "Address Line 1",
+      "default": "Marszałka Józefa Piłsudskiego 31,"
+    },
+    {
+      "type": "text",
+      "id": "company_address_2",
+      "label": "Address Line 2",
+      "default": "72-300 Gryfice, Poland"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone Number",
+      "default": "+18883736114"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email Address",
+      "default": "hello@tryscent.co"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Layout"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Footer Background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Headings Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text & Links Color",
+      "default": "#CCCCCC"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "Link Hover Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent Footer"
+    }
+  ]
+}
+{% endschema %}

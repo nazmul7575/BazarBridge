@@ -1,0 +1,959 @@
+{% liquid
+  assign section_id = 'ts-ugc-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="ts-ugc-section"
+  data-autoplay-target="{{ section.settings.touch_autoplay_target }}"
+  style="
+    --ts-bg: {{ section.settings.bg_color }};
+    --ts-text: {{ section.settings.text_color }};
+    --ts-card-bg: {{ section.settings.card_bg_color }};
+    --ts-card-text: {{ section.settings.card_text_color }};
+    --ts-border: {{ section.settings.border_color }};
+    --ts-btn-color: {{ section.settings.btn_color }};
+    --ts-max: {{ section.settings.max_width }}px;
+    --ts-pt: {{ section.settings.padding_top }}px;
+    --ts-pb: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="ts-ugc__inner">
+    <!-- Header -->
+    <div class="ts-ugc__header">
+      <h2 class="ts-ugc__title">
+        {{ section.settings.heading | escape }}
+      </h2>
+
+      {% if section.settings.show_arrows %}
+        <div class="ts-ugc__arrows">
+          <button type="button" class="ts-ugc-arrow ts-ugc-arrow--prev" data-ts-prev aria-label="Föregående">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+          </button>
+          <button type="button" class="ts-ugc-arrow ts-ugc-arrow--next" data-ts-next aria-label="Nästa">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Carousel Viewport -->
+    <div class="ts-ugc__carousel" data-ts-carousel>
+      <div class="ts-ugc__viewport" data-ts-viewport>
+        <div class="ts-ugc__track" data-ts-track>
+          {% for block in section.blocks %}
+            {% assign card_product = all_products[block.settings.product] %}
+            
+            <div class="ts-ugc-card" data-ts-slide {{ block.shopify_attributes }}>
+              <!-- Clickable Card Wrapper -->
+              {% if block.settings.video != blank %}
+                <div class="ts-ugc-card__clickable" data-ts-video-trigger data-video-url="{{ block.settings.video.sources[1].url | default: block.settings.video.sources[0].url }}">
+              {% else %}
+                <div class="ts-ugc-card__clickable">
+              {% endif %}
+                <!-- Video or Fallback Poster Image -->
+                <div class="ts-ugc-card__media">
+                  {% if block.settings.video != blank %}
+                    {%- liquid
+                      assign is_autoplay = false
+                      if forloop.first
+                        assign is_autoplay = true
+                      endif
+                    -%}
+                    {{ block.settings.video | video_tag: autoplay: is_autoplay, loop: true, muted: true, playsinline: true, preload: 'metadata', image_size: '1200x', class: 'ts-ugc-card__video' }}
+                  {% elsif block.settings.poster_image != blank %}
+                    <img
+                      src="{{ block.settings.poster_image | image_url: width: 1200 }}"
+                      alt="{{ block.settings.poster_image.alt | default: section.settings.heading | escape }}"
+                      loading="lazy"
+                      class="ts-ugc-card__poster"
+                    >
+                  {% else %}
+                    <div class="ts-ugc-card__placeholder">
+                      {{ 'lifestyle-1' | placeholder_svg_tag: 'ts-placeholder-svg' }}
+                    </div>
+                  {% endif %}
+
+                  {% if block.settings.subtitle_text != blank %}
+                    <div class="ts-ugc-card__caption">
+                      {{ block.settings.subtitle_text | escape }}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Product Overlay Box -->
+              {% if card_product != blank or block.settings.custom_title != blank %}
+                <div class="ts-ugc-card__overlay-product">
+                  <div class="ts-ugc-product__thumb">
+                    {% if block.settings.custom_image != blank %}
+                      <img src="{{ block.settings.custom_image | image_url: width: 120 }}" alt="" loading="lazy">
+                    {% elsif card_product.featured_media != blank %}
+                      <img src="{{ card_product.featured_media | image_url: width: 120 }}" alt="" loading="lazy">
+                    {% else %}
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    {% endif %}
+                  </div>
+
+                  <div class="ts-ugc-product__info">
+                    <h4 class="ts-ugc-product__title">
+                      {% if block.settings.custom_title != blank %}
+                        {{ block.settings.custom_title | escape }}
+                      {% else %}
+                        {{ card_product.title | escape }}
+                      {% endif %}
+                    </h4>
+                    <div class="ts-ugc-product__price">
+                      {% if block.settings.custom_price != blank %}
+                        {{ block.settings.custom_price | escape }}
+                      {% else %}
+                        {{ card_product.price | money }}
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  {% if card_product != blank %}
+                    <a href="{{ card_product.url }}" class="ts-ugc-product__add-btn" aria-label="Visa produkt">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </a>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Popup Modal with Sound -->
+  <div class="ts-ugc-modal" data-ts-modal>
+    <div class="ts-ugc-modal__backdrop" data-ts-modal-close></div>
+    <div class="ts-ugc-modal__content">
+      <button type="button" class="ts-ugc-modal__close" data-ts-modal-close aria-label="Stäng">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <video controls playsinline class="ts-ugc-modal__video" data-ts-modal-video></video>
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    background-color: var(--ts-bg);
+    color: var(--ts-text);
+    padding-top: var(--ts-pt);
+    padding-bottom: var(--ts-pb);
+    font-family: inherit;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-ugc__inner {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Header */
+  #{{ section_id }} .ts-ugc__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  #{{ section_id }} .ts-ugc__title {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0;
+    color: var(--ts-text);
+    letter-spacing: -0.02em;
+  }
+
+  #{{ section_id }} .ts-ugc__arrows {
+    display: flex;
+    gap: 8px;
+  }
+
+  #{{ section_id }} .ts-ugc-arrow {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--ts-border);
+    background: #ffffff;
+    color: var(--ts-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  #{{ section_id }} .ts-ugc-arrow:not(:disabled):hover {
+    color: #ffffff;
+    background: #000000;
+  }
+
+  #{{ section_id }} .ts-ugc-arrow:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  #{{ section_id }} .ts-ugc-arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Carousel Track */
+  #{{ section_id }} .ts-ugc__viewport {
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+
+  #{{ section_id }} .ts-ugc__track {
+    display: flex;
+    gap: 16px;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+  }
+
+  /* UGC Video / Image Card */
+  #{{ section_id }} .ts-ugc-card {
+    flex: 0 0 calc((100% - 48px) / 4);
+    min-width: 0;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 9 / 16;
+    background-color: #000000;
+  }
+
+  #{{ section_id }} .ts-ugc-card__clickable {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    display: block;
+  }
+
+  #{{ section_id }} .ts-ugc-card__media {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  #{{ section_id }} .ts-ugc-card__video,
+  #{{ section_id }} .ts-ugc-card__poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  #{{ section_id }} .ts-ugc-card__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e4e4e7;
+  }
+
+  #{{ section_id }} .ts-placeholder-svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.5;
+  }
+
+  #{{ section_id }} .ts-ugc-card__caption {
+    position: absolute;
+    bottom: 82px;
+    left: 12px;
+    right: 12px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    pointer-events: none;
+    line-height: 1.3;
+    z-index: 3;
+  }
+
+  /* Product Overlay Box */
+  #{{ section_id }} .ts-ugc-card__overlay-product {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    background-color: var(--ts-card-bg);
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 4;
+  }
+
+  #{{ section_id }} .ts-ugc-product__thumb {
+    width: 66px;
+    height: 66px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .ts-ugc-product__thumb img,
+  #{{ section_id }} .ts-ugc-product__thumb svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #{{ section_id }} .ts-ugc-product__info {
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  #{{ section_id }} .ts-ugc-product__title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 2px;
+    color: var(--ts-card-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+  }
+
+  #{{ section_id }} .ts-ugc-product__price {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ts-card-text);
+    line-height: 1;
+  }
+
+  #{{ section_id }} .ts-ugc-product__add-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #146b32;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ts-btn-color);
+    background-color: #ffffff;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+  }
+
+  #{{ section_id }} .ts-ugc-product__add-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Video Modal Popup Styles */
+  #{{ section_id }} .ts-ugc-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  #{{ section_id }} .ts-ugc-modal.is-active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  #{{ section_id }} .ts-ugc-modal__backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  #{{ section_id }} .ts-ugc-modal__content {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 9 / 16;
+    background: #000000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 2;
+    margin: 20px;
+  }
+
+  #{{ section_id }} .ts-ugc-modal__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #{{ section_id }} .ts-ugc-modal__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s ease;
+  }
+
+  #{{ section_id }} .ts-ugc-modal__close:hover {
+    background: rgba(0, 0, 0, 0.9);
+  }
+
+  #{{ section_id }} .ts-ugc-modal__close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Responsive Breaking Points */
+  @media screen and (max-width: 1024px) {
+    #{{ section_id }} .ts-ugc-card {
+      flex: 0 0 calc((100% - 32px) / 3);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} .ts-ugc__title {
+      font-size: 22px;
+    }
+
+    #{{ section_id }} .ts-ugc-card {
+      flex: 0 0 calc((100% - 16px) / 2);
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    #{{ section_id }} .ts-ugc-card {
+      flex: 0 0 80%;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById({{ section_id | json }});
+    if (!root) return;
+
+    const viewport = root.querySelector('[data-ts-viewport]');
+    const track = root.querySelector('[data-ts-track]');
+    const slides = Array.from(root.querySelectorAll('[data-ts-slide]'));
+    const prev = root.querySelector('[data-ts-prev]');
+    const next = root.querySelector('[data-ts-next]');
+    const modal = root.querySelector('[data-ts-modal]');
+    const modalVideo = root.querySelector('[data-ts-modal-video]');
+    const modalCloseElements = root.querySelectorAll('[data-ts-modal-close]');
+
+    if (!track || !slides.length) return;
+
+    let currentIndex = 0;
+    let modalOpen = false;
+    let sectionInView = false;
+    const allVideos = slides.map((slide) => slide.querySelector('video')).filter(Boolean);
+
+    // Make sure every card video can autoplay on phones (must be muted + inline)
+    allVideos.forEach((v) => {
+      v.muted = true;
+      v.setAttribute('muted', '');
+      v.setAttribute('playsinline', '');
+      v.loop = true;
+    });
+
+    /* ---------- Which mode are we in? ----------
+       Tablet + mobile (≤1024px or touch screens): autoplay one visible card at a time.
+       Desktop: first video plays, hovering a card plays that one (as before). */
+    const touchMode = window.matchMedia('(max-width: 1024px), (hover: none)');
+    const isTouchMode = () => touchMode.matches;
+
+    const safePlay = (v) => {
+      if (v && v.paused) v.play().catch(() => {});
+    };
+    const pauseAll = () => allVideos.forEach((v) => v.pause());
+
+    /* ---------- Tablet + mobile: autoplay ONE visible card ---------- */
+    const visibleVideos = new Set();
+    const autoplayTarget = root.getAttribute('data-autoplay-target') || 'first';
+
+    // Pick the single card that should play: the first visible card, or the one nearest the middle
+    function pickActiveVideo() {
+      const candidates = allVideos.filter((v) => visibleVideos.has(v));
+      if (!candidates.length) return null;
+      if (autoplayTarget !== 'center' || !viewport) return candidates[0];
+
+      const box = viewport.getBoundingClientRect();
+      const middle = box.left + box.width / 2;
+      let best = null;
+      let bestDistance = Infinity;
+      candidates.forEach((v) => {
+        const r = v.getBoundingClientRect();
+        const distance = Math.abs(r.left + r.width / 2 - middle);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          best = v;
+        }
+      });
+      return best;
+    }
+
+    function syncTouchPlayback() {
+      if (!isTouchMode()) return;
+      const active = sectionInView && !modalOpen ? pickActiveVideo() : null;
+      allVideos.forEach((v) => {
+        if (v === active) {
+          safePlay(v);
+        } else if (!v.paused) {
+          v.pause();
+        }
+      });
+    }
+
+    // Re-check once the slide animation has finished
+    track.addEventListener('transitionend', (e) => {
+      if (e.target === track) syncTouchPlayback();
+    });
+
+    if ('IntersectionObserver' in window && viewport) {
+      // A card counts as "visible" when at least 60% of it is inside the slider
+      const cardObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const v = entry.target.querySelector('video');
+            if (!v) return;
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+              visibleVideos.add(v);
+            } else {
+              visibleVideos.delete(v);
+            }
+          });
+          syncTouchPlayback();
+        },
+        { root: viewport, threshold: [0, 0.6, 1] }
+      );
+      slides.forEach((slide) => {
+        if (slide.querySelector('video')) cardObserver.observe(slide);
+      });
+
+      // Only play while the section itself is on screen (saves data and battery)
+      const sectionObserver = new IntersectionObserver(
+        (entries) => {
+          sectionInView = entries[0].isIntersecting;
+          if (isTouchMode()) {
+            syncTouchPlayback();
+          } else if (!sectionInView) {
+            pauseAll();
+          } else if (!modalOpen) {
+            safePlay(allVideos[0]);
+          }
+        },
+        { threshold: 0.2 }
+      );
+      sectionObserver.observe(root);
+    } else {
+      sectionInView = true;
+    }
+
+    /* ---------- Desktop: hover to play (unchanged behaviour) ---------- */
+    slides.forEach((slide) => {
+      const video = slide.querySelector('video');
+      if (!video) return;
+
+      slide.addEventListener('mouseenter', () => {
+        if (isTouchMode() || modalOpen) return;
+        allVideos.forEach((v) => {
+          if (v !== video) v.pause();
+        });
+        safePlay(video);
+      });
+
+      slide.addEventListener('mouseleave', () => {
+        if (isTouchMode() || modalOpen) return;
+        video.pause();
+        safePlay(allVideos[0]);
+      });
+    });
+
+    // Switching between desktop and tablet/mobile (e.g. rotating a tablet)
+    const onModeChange = () => {
+      if (isTouchMode()) {
+        syncTouchPlayback();
+      } else {
+        pauseAll();
+        if (sectionInView && !modalOpen) safePlay(allVideos[0]);
+      }
+    };
+    if (touchMode.addEventListener) {
+      touchMode.addEventListener('change', onModeChange);
+    } else if (touchMode.addListener) {
+      touchMode.addListener(onModeChange);
+    }
+
+    /* ---------- Click / tap: open the video with sound (as before) ---------- */
+    let justSwiped = false;
+    const triggers = root.querySelectorAll('[data-ts-video-trigger]');
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (justSwiped) return;
+        const videoUrl = trigger.getAttribute('data-video-url');
+        if (!videoUrl || !modal || !modalVideo) return;
+
+        modalOpen = true;
+        pauseAll();
+        modalVideo.src = videoUrl;
+        modalVideo.muted = false;
+        modal.classList.add('is-active');
+        modalVideo.play().catch(() => {});
+      });
+    });
+
+    function closeModal() {
+      if (!modal || !modalVideo || !modalOpen) return;
+      modal.classList.remove('is-active');
+      modalVideo.pause();
+      modalVideo.currentTime = 0;
+      modalVideo.removeAttribute('src');
+      modalVideo.load();
+      modalOpen = false;
+
+      // Resume the background videos
+      if (isTouchMode()) {
+        syncTouchPlayback();
+      } else if (sectionInView) {
+        safePlay(allVideos[0]);
+      }
+    }
+
+    modalCloseElements.forEach((el) => {
+      el.addEventListener('click', closeModal);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    /* ---------- Carousel ---------- */
+    function getVisibleCount() {
+      const width = window.innerWidth;
+      if (width <= 480) return 1;
+      if (width <= 749) return 2;
+      if (width <= 1024) return 3;
+      return 4;
+    }
+
+    function getMaxIndex() {
+      return Math.max(0, slides.length - getVisibleCount());
+    }
+
+    function update() {
+      const maxIdx = getMaxIndex();
+      currentIndex = Math.max(0, Math.min(currentIndex, maxIdx));
+
+      const targetSlide = slides[currentIndex];
+      if (targetSlide) {
+        const offset = targetSlide.offsetLeft - slides[0].offsetLeft;
+        track.style.transform = `translateX(-${offset}px)`;
+      }
+
+      if (prev) prev.disabled = currentIndex === 0;
+      if (next) next.disabled = currentIndex >= maxIdx;
+    }
+
+    if (prev) {
+      prev.addEventListener('click', () => {
+        currentIndex = Math.max(0, currentIndex - 1);
+        update();
+      });
+    }
+
+    if (next) {
+      next.addEventListener('click', () => {
+        currentIndex = Math.min(getMaxIndex(), currentIndex + 1);
+        update();
+      });
+    }
+
+    /* ---------- Swipe on phones and tablets ---------- */
+    if (viewport) {
+      let startX = 0;
+      let startY = 0;
+      let deltaX = 0;
+      let deltaY = 0;
+
+      viewport.addEventListener(
+        'touchstart',
+        (e) => {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          deltaX = 0;
+          deltaY = 0;
+        },
+        { passive: true }
+      );
+
+      viewport.addEventListener(
+        'touchmove',
+        (e) => {
+          deltaX = e.touches[0].clientX - startX;
+          deltaY = e.touches[0].clientY - startY;
+        },
+        { passive: true }
+      );
+
+      viewport.addEventListener('touchend', () => {
+        if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+          currentIndex = deltaX < 0
+            ? Math.min(getMaxIndex(), currentIndex + 1)
+            : Math.max(0, currentIndex - 1);
+          update();
+
+          // Don't treat the swipe as a tap that opens the popup
+          justSwiped = true;
+          setTimeout(() => (justSwiped = false), 350);
+        }
+      });
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(update, 100);
+    });
+
+    update();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "TryScent UGC Video Slider",
+  "tag": "section",
+  "class": "section-tryscent-ugc",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Älskad av tusentals"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show Navigation Arrows",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "touch_autoplay_target",
+      "label": "Tablet & mobile: which video autoplays",
+      "info": "Only one video plays at a time. Tapping a card still opens it with sound.",
+      "options": [
+        { "value": "first", "label": "First visible card" },
+        { "value": "center", "label": "Card in the middle" }
+      ],
+      "default": "first"
+    },
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max Content Width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1140
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Heading Text Color",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Product Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Product Card Text Color",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border & Control Color",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "color",
+      "id": "btn_color",
+      "label": "Plus Button Color",
+      "default": "#396A3E"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ugc_card",
+      "name": "UGC Video Card",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Shopify Hosted Video"
+        },
+        {
+          "type": "image_picker",
+          "id": "poster_image",
+          "label": "Fallback Poster Image"
+        },
+        {
+          "type": "text",
+          "id": "subtitle_text",
+          "label": "Video Subtitle/Caption Overlay",
+          "default": "för den kostar 174 kronor"
+        },
+        {
+          "type": "header",
+          "content": "Product Overlay"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Product"
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom Product Title Override",
+          "default": "Doftar som... Born in Rom..."
+        },
+        {
+          "type": "text",
+          "id": "custom_price",
+          "label": "Custom Price Text Override",
+          "default": "169,99 kr"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom Product Thumbnail Override"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent UGC Video Slider",
+      "blocks": [
+        {
+          "type": "ugc_card",
+          "settings": {
+            "custom_title": "Doftar som... Born in Rom...",
+            "custom_price": "169,99 kr"
+          }
+        },
+        {
+          "type": "ugc_card",
+          "settings": {
+            "custom_title": "Doftar som... Uomo Born ...",
+            "custom_price": "169,99 kr"
+          }
+        },
+        {
+          "type": "ugc_card",
+          "settings": {
+            "custom_title": "4x 100ml Parfymflaskor",
+            "custom_price": "674,97 kr"
+          }
+        },
+        {
+          "type": "ugc_card",
+          "settings": {
+            "subtitle_text": "för den kostar 174 kronor"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

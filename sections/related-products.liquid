@@ -1,0 +1,471 @@
+{% liquid
+  assign section_id = 'ts-recs-' | append: section.id
+  assign selected_collection = collections[section.settings.collection]
+%}
+
+<section
+  id="{{ section_id }}"
+  class="ts-recs-section"
+  style="
+    --ts-bg: {{ section.settings.background_color }};
+    --ts-top: {{ section.settings.padding_top }}px;
+    --ts-bottom: {{ section.settings.padding_bottom }}px;
+    --ts-max: {{ section.settings.content_width }}px;
+    --ts-brand-green: {{ section.settings.brand_green }};
+    --ts-brand-green-hover: {{ section.settings.brand_green_hover }};
+  "
+>
+  <div class="ts-recs-container">
+    
+    <!-- Section Header Row -->
+    <div class="ts-recs-header">
+      <h2 class="ts-recs-title">
+        {{ section.settings.heading | escape }}
+      </h2>
+
+      {% if section.settings.show_view_all and selected_collection != blank %}
+        <a href="{{ selected_collection.url }}" class="ts-recs-view-all">
+          {{ section.settings.view_all_label | escape }}
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- Products Carousel / Grid -->
+    <div class="ts-recs-grid-wrapper">
+      <div class="ts-recs-grid">
+        {% if selected_collection != blank and selected_collection.products_count > 0 %}
+          {% for product in selected_collection.products limit: section.settings.products_to_show %}
+            <div class="ts-product-card">
+              <a href="{{ product.url }}" class="ts-card-img-link">
+                {% if product.featured_media %}
+                  {{
+                    product.featured_media
+                    | image_url: width: 500
+                    | image_tag: loading: 'lazy', class: 'ts-card-img', alt: product.title
+                  }}
+                {% else %}
+                  <div class="ts-card-placeholder">
+                    {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                {% endif %}
+              </a>
+
+              <div class="ts-card-content">
+                <a href="{{ product.url }}" class="ts-card-title-link">
+                  <h3 class="ts-card-title">{{ product.title | escape }}</h3>
+                </a>
+
+                <!-- Subtitle / Inspiration Note -->
+                {% assign inspired_by = product.metafields.custom.inspired_by | default: product.vendor %}
+                {% if inspired_by != blank %}
+                  <span class="ts-card-inspired">Inspirerad av {{ inspired_by | escape }}</span>
+                {% else %}
+                  <span class="ts-card-inspired">Inspirerad av Lyxdoft</span>
+                {% endif %}
+
+                <!-- Price Row -->
+                <div class="ts-card-price-row">
+                  <span class="ts-card-price">{{ product.price | money }}</span>
+                  {% if product.compare_at_price > product.price %}
+                    <strike class="ts-card-compare-price">{{ product.compare_at_price | money }}</strike>
+                  {% endif %}
+                </div>
+
+                <!-- Add to Cart Form -->
+                {% form 'product', product, class: 'ts-card-form' %}
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  <button
+                    type="submit"
+                    name="add"
+                    class="ts-card-atc-btn"
+                    {% unless product.available %}disabled{% endunless %}
+                  >
+                    {% if product.available %}
+                      {{ section.settings.atc_button_label | escape }}
+                    {% else %}
+                      Slutsåld
+                    {% endif %}
+                  </button>
+                {% endform %}
+              </div>
+            </div>
+          {% endfor %}
+
+        {% else %}
+          <!-- Demo Fallback Cards for Shopify Customizer Preview -->
+          {% for i in (1..5) %}
+            <div class="ts-product-card">
+              <div class="ts-card-img-link">
+                <div class="ts-card-placeholder">
+                  {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              </div>
+              <div class="ts-card-content">
+                <h3 class="ts-card-title">Doftar som... Premium Parfym No. {{ i }}</h3>
+                <span class="ts-card-inspired">Inspirerad av Designer Brand</span>
+                <div class="ts-card-price-row">
+                  <span class="ts-card-price">169,99 kr</span>
+                  <strike class="ts-card-compare-price">kr349,00</strike>
+                </div>
+                <button type="button" class="ts-card-atc-btn">
+                  {{ section.settings.atc_button_label | escape }}
+                </button>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    padding: var(--ts-top) 20px var(--ts-bottom);
+    background-color: var(--ts-bg);
+    font-family: 'Figtree', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #121212;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-recs-container {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* Header Row */
+  #{{ section_id }} .ts-recs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  #{{ section_id }} .ts-recs-title {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #121212;
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  #{{ section_id }} .ts-recs-view-all {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #121212;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 10px 24px;
+    border: 2px solid #121212;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  /* Carousel / Grid Wrapper */
+  #{{ section_id }} .ts-recs-grid-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    padding: 4px 0 12px;
+  }
+
+  #{{ section_id }} .ts-recs-grid-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  #{{ section_id }} .ts-recs-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - (16px * 4)) / 5);
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  /* Product Card Styling */
+  #{{ section_id }} .ts-product-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  #{{ section_id }} .ts-card-img-link {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    margin-bottom: 14px;
+    border-radius: 4px;
+  }
+
+  #{{ section_id }} .ts-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  #{{ section_id }} .ts-card-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #{{ section_id }} .ts-card-placeholder svg {
+    width: 60%;
+    height: 60%;
+  }
+
+  /* Card Content */
+  #{{ section_id }} .ts-card-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  #{{ section_id }} .ts-card-title-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  #{{ section_id }} .ts-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #121212;
+    margin: 0 0 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 38px;
+  }
+
+  #{{ section_id }} .ts-card-inspired {
+    font-size: 12px;
+    line-height: 16px;
+    color: #6b7280;
+    display: block;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Price Row */
+  #{{ section_id }} .ts-card-price-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    margin-top: auto;
+  }
+
+  #{{ section_id }} .ts-card-price {
+    font-size: 14px;
+    font-weight: 700;
+    color: #121212;
+  }
+
+  #{{ section_id }} .ts-card-compare-price {
+    font-size: 12px;
+    color: #e53e3e;
+    text-decoration: line-through;
+  }
+
+  /* Add to Cart Button */
+  #{{ section_id }} .ts-card-form {
+    margin: 0;
+    width: 100%;
+  }
+
+  #{{ section_id }} .ts-card-atc-btn {
+    width: 100%;
+    background-color: #146b32;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color ease;
+  }
+
+  #{{ section_id }} .ts-card-atc-btn:hover {
+    background-color: #17803d;
+  }
+
+  #{{ section_id }} .ts-card-atc-btn:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+  }
+
+  /* Responsive Layout Breakpoints */
+  @media screen and (max-width: 1100px) {
+    #{{ section_id }} .ts-recs-grid {
+      grid-auto-columns: calc((100% - (16px * 3)) / 4);
+    }
+  }
+
+  @media screen and (max-width: 850px) {
+    #{{ section_id }} .ts-recs-title {
+      font-size: 24px;
+    }
+
+    #{{ section_id }} .ts-recs-grid {
+      grid-auto-columns: calc((100% - (12px * 2)) / 2.5);
+      gap: 12px;
+    }
+  }
+
+  @media screen and (max-width: 550px) {
+    #{{ section_id }} .ts-recs-grid {
+      grid-auto-columns: calc((100% - 12px) / 1.5);
+    }
+
+    #{{ section_id }} .ts-recs-view-all {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "TryScent Recommendations",
+  "tag": "section",
+  "class": "section-tryscent-recommendations",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Titles & Navigation"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Du kanske också gillar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View All' Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "'View All' Button Text",
+      "default": "Visa alla"
+    },
+    {
+      "type": "header",
+      "content": "Collection Selection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Maximum Products to Display",
+      "min": 4,
+      "max": 15,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "text",
+      "id": "atc_button_label",
+      "label": "Add to Cart Button Text",
+      "default": "Lägg i kundvagnen"
+    },
+    {
+      "type": "header",
+      "content": "Theme Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background",
+      "default": "#FAFAFA"
+    },
+    {
+      "type": "color",
+      "id": "brand_green",
+      "label": "Brand Green Color",
+      "default": "#107A42"
+    },
+    {
+      "type": "color",
+      "id": "brand_green_hover",
+      "label": "Brand Green Hover",
+      "default": "#0B5F33"
+    },
+    {
+      "type": "header",
+      "content": "Layout Width & Spacing"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Max Container Width",
+      "min": 900,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1180
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent Recommendations"
+    }
+  ]
+}
+{% endschema %}

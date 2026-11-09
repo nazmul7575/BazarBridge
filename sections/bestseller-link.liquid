@@ -1,0 +1,359 @@
+{% liquid
+  assign section_id = 'ts-bestsellers-bar-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="ts-bestsellers-bar"
+  style="
+    --ts-bg: {{ section.settings.background_color }};
+    --ts-top: {{ section.settings.padding_top }}px;
+    --ts-bottom: {{ section.settings.padding_bottom }}px;
+    --ts-max: {{ section.settings.content_width }}px;
+    --ts-text-color: {{ section.settings.text_color }};
+    --ts-link-color: {{ section.settings.link_color }};
+    --ts-pipe-color: {{ section.settings.divider_color }};
+  "
+>
+  <div class="ts-bestsellers-bar__inner">
+    {% if section.settings.heading != blank %}
+      <div class="ts-bestsellers-bar__title-wrapper">
+        <h2 class="ts-bestsellers-bar__title">{{ section.settings.heading | escape }}</h2>
+      </div>
+    {% endif %}
+
+    {% if section.blocks.size > 0 %}
+      <div class="ts-bestsellers-bar__links">
+        {% for block in section.blocks %}
+          <div class="ts-bestsellers-bar__item" {{ block.shopify_attributes }}>
+            <span class="ts-bestsellers-bar__prefix">{{ block.settings.prefix | escape }}</span>
+            <a
+              href="{{ block.settings.link | default: '#' }}"
+              class="ts-bestsellers-bar__link"
+            >
+              {{ block.settings.title | escape }}
+            </a>
+            {% unless forloop.last %}
+              <span class="ts-bestsellers-bar__divider">|</span>
+            {% endunless %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    background-color: var(--ts-bg);
+    padding: var(--ts-top) 24px var(--ts-bottom);
+    font-family: inherit;
+    color: var(--ts-text-color);
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-bestsellers-bar__inner {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  /* Left Side Title */
+  #{{ section_id }} .ts-bestsellers-bar__title-wrapper {
+    flex: 0 0 auto;
+  }
+
+  #{{ section_id }} .ts-bestsellers-bar__title {
+    color: var(--ts-text-color);
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  /* Right Side Links Grid / Flex */
+  #{{ section_id }} .ts-bestsellers-bar__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px 16px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  #{{ section_id }} .ts-bestsellers-bar__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  #{{ section_id }} .ts-bestsellers-bar__prefix {
+    color: #e5e7eb;
+    letter-spacing: 0.35px;
+    line-height: 1;
+    font-size: 14px;
+  }
+
+  #{{ section_id }} .ts-bestsellers-bar__link {
+    color: var(--ts-link-color);
+    font-weight: 700;
+    text-decoration: underline;
+    transition: opacity 0.2s ease;
+  }
+
+  #{{ section_id }} .ts-bestsellers-bar__link:hover {
+    opacity: 0.8;
+  }
+
+  #{{ section_id }} .ts-bestsellers-bar__divider {
+    color: #ffffff;
+    margin-left: 8px;
+    font-weight: 300;
+  }
+
+  /* Responsive Mobile Layout */
+  @media screen and (max-width: 900px) {
+    #{{ section_id }} .ts-bestsellers-bar__inner {
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+
+    #{{ section_id }} .ts-bestsellers-bar__links {
+      justify-content: center;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    #{{ section_id }} {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    #{{ section_id }} .ts-bestsellers-bar__title {
+      font-size: 18px;
+    }
+
+    #{{ section_id }} .ts-bestsellers-bar__links {
+      font-size: 12px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "TryScent Bestsellers Bar",
+  "tag": "section",
+  "class": "section-tryscent-bestsellers-bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading Text",
+      "default": "Våra bästsäljare"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background",
+      "default": "#1E5631"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Pipe Divider Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 8,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 8,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    }
+  ],
+  "blocks": [
+    {
+      "type": "bestseller_link",
+      "name": "Bestseller Link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "prefix",
+          "label": "Prefix Text",
+          "default": "Inspirerad av:"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Fragrance Name",
+          "default": "Aventus"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link Destination"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent Bestsellers Bar",
+      "blocks": [
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Aventus"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Dior Sauvage"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Maison Francis Kurkdjian Baccarat Rouge 540"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Yves Saint Laurent Y"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Prada Paradoxe"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Versace Eros"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Mugler Alien"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Giorgio Armani Emporio Armani She"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Giorgio Armani Si"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Chanel N°5"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Valentino Donna Born in Roma"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "YSL Black Opium"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Tom Ford Lost Cherry"
+          }
+        },
+        {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Libre"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

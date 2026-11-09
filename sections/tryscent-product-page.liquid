@@ -1,0 +1,1133 @@
+{%- comment -%}
+  TryScent Product Page (compact)
+  1. Setup  2. Styles  3. Markup  4. Script  5. Schema
+  Desktop: gallery + feature cards left, info right. Mobile: one column, image edge to edge.
+{%- endcomment -%}
+
+{%- comment -%} ===== 1. SETUP ===== {%- endcomment -%}
+{%- liquid
+  assign sid = 'ts-pdp-' | append: section.id
+
+  # Selected variant: URL ?variant=, else "Pre-selected size", else first available
+  assign cv = product.selected_or_first_available_variant
+  if product.selected_variant == nil and section.settings.default_variant != blank
+    assign wanted = section.settings.default_variant | downcase | remove: ' '
+    for v in product.variants
+      assign v_name = v.title | downcase | remove: ' '
+      if v_name == wanted and v.available
+        assign cv = v
+        break
+      endif
+    endfor
+  endif
+
+  # Gallery: product images + shared "Gallery image" blocks
+  assign extra_count = 0
+  assign feature_count = 0
+  assign attrs_count = 0
+  for block in section.blocks
+    if block.type == 'gallery_image' and block.settings.image != blank
+      assign extra_count = extra_count | plus: 1
+    elsif block.type == 'gallery_feature'
+      assign feature_count = feature_count | plus: 1
+    elsif block.type == 'scent_attributes'
+      assign attrs_count = attrs_count | plus: 1
+    endif
+  endfor
+  # When those blocks are missing, show the default feature cards + scent icons
+  assign auto = section.settings.auto_defaults
+
+  assign show_extra = false
+  assign own_count = product.media.size
+  if extra_count > 0
+    case section.settings.default_mode
+      when 'replace'
+        assign show_extra = true
+        assign own_count = 1
+      when 'append'
+        assign show_extra = true
+      else
+        if product.media.size <= section.settings.default_when
+          assign show_extra = true
+        endif
+    endcase
+  endif
+  if own_count > product.media.size
+    assign own_count = product.media.size
+  endif
+  assign total_slides = own_count
+  if show_extra
+    assign total_slides = total_slides | plus: extra_count
+  endif
+
+  assign start_index = 0
+  for media in product.media limit: own_count
+    if media.id == cv.featured_media.id
+      assign start_index = forloop.index0
+    endif
+  endfor
+
+  # Icon library: names and SVG paths in the same order
+  assign icon_names = 'bottle,stars,shield,truck,heart,leaf,check,timer,drop,daynight,summer,winter,night,intensity,flame,clipboard,globe,star,info' | split: ','
+-%}
+{%- capture icon_library -%}
+<path d="M9.5 2.5h5v3h-5zM10.5 5.5v2M13.5 5.5v2"/><rect x="6" y="7.5" width="12" height="14" rx="2"/><path d="M9 13.5h6"/>@@
+<text x="12" y="15.5" text-anchor="middle" font-size="13" fill="#f5b301" stroke="none" letter-spacing="-1">★★★</text>@@
+<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>@@
+<path d="M2 6h12v10H2zM14 10h4.5L22 13.5V16h-8z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="18" cy="17.5" r="1.8"/>@@
+<path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"/>@@
+<path d="M5 19C5 10 11 4 20 4c0 9-6 15-15 15z"/><path d="M5 19c4-5 8-8 11-10"/>@@
+<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.5L16 9.5"/>@@
+<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5M12 2.5V5"/>@@
+<path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11z"/><path d="M9 15a3 3 0 0 0 3 3"/>@@
+<circle cx="9" cy="14" r="4"/><path d="M9 6.5V8M9 20v1.5M1.5 14H3M15 14h1.5M3.7 8.7l1 1M13.3 18.3l1 1M3.7 19.3l1-1M13.3 9.7l1-1"/><path d="M17.5 2.5a3.5 3.5 0 1 0 4 4.5 3 3 0 0 1-4-4.5z"/>@@
+<circle cx="12" cy="8.5" r="3.5"/><path d="M12 2v1.5M5.5 8.5H4M20 8.5h-1.5M7.4 3.9l1 1M16.6 3.9l-1 1"/><path d="M3 16c1.5 0 1.5-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1M3 20c1.5 0 1.5-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1"/>@@
+<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5L12 7l2.5-2.5M9.5 19.5L12 17l2.5 2.5"/>@@
+<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>@@
+<rect x="4" y="8" width="10" height="13" rx="1.5"/><path d="M7 4.5h4V8H7zM4 15h10"/><path d="M18 21v-5M21 21V12"/>@@
+<path d="M12 21a6 6 0 0 0 6-6c0-4-3-6-4-10-2 2-3 4-3 6-1-1-1.5-2-1.5-3C7 10 6 12.5 6 15a6 6 0 0 0 6 6z"/>@@
+<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M8.5 10h7M8.5 13.5h7M8.5 17h4"/>@@
+<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9z"/>@@
+<path d="M12 3.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.9l-5.3 2.7 1-5.8-4.2-4.1 5.9-.9z"/>@@
+<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/>
+{%- endcapture -%}
+{%- assign icon_paths = icon_library | split: '@@' -%}
+{%- capture svg -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{%- endcapture -%}
+{%- capture info_icon -%}<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.5" stroke="currentColor"/><path d="M8 7v4" stroke="currentColor" stroke-linecap="round"/><circle cx="8" cy="5" r=".7" fill="currentColor"/></svg>{%- endcapture -%}
+
+{%- comment -%} ===== 2. STYLES ===== {%- endcomment -%}
+{%- if section.settings.use_figtree -%}
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+{%- endif -%}
+<style>
+  #{{ sid }} {
+    --bg: {{ section.settings.bg_color }}; --text: {{ section.settings.text_color }}; --muted: {{ section.settings.muted_color }};
+    --line: {{ section.settings.border_color }}; --accent: {{ section.settings.accent_color }}; --star: {{ section.settings.star_color }};
+    --img-bg: {{ section.settings.gallery_bg }}; --card-bg: {{ section.settings.card_bg }}; --card-text: {{ section.settings.card_text }};
+    --size-active: {{ section.settings.size_active_color }};
+    --font: {% if section.settings.use_figtree %}'Figtree', {% endif %}var(--font-body-family), sans-serif;
+    background: var(--bg); color: var(--muted); font-family: var(--font); font-size: 16px; line-height: 1.5; letter-spacing: 0;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
+  #{{ sid }} svg { display: block; }
+  #{{ sid }} p { margin: 0; }
+  #{{ sid }} h1, #{{ sid }} button, #{{ sid }} summary { font-family: var(--font); letter-spacing: 0; }
+
+  /* Layout */
+  #{{ sid }} .ts-wrap { max-width: {{ section.settings.max_width | plus: 40 }}px; margin: 0 auto; padding: 0 20px; }
+  #{{ sid }} .ts-grid { display: grid; grid-template-columns: minmax(0, 550fr) minmax(0, 510fr); gap: 40px; align-items: start; }
+  #{{ sid }} .ts-gallery { position: sticky; top: calc(var(--header-height, 0px) + 20px); min-width: 0; }
+  #{{ sid }} .ts-info { display: flex; flex-direction: column; gap: 15px; min-width: 0; }
+
+  /* Tooltip */
+  #{{ sid }} .ts-tip { position: relative; display: inline-flex; width: 14px; height: 14px; cursor: help; }
+  #{{ sid }} .ts-tip svg { width: 100%; height: 100%; }
+  #{{ sid }} .ts-tip__text { display: none; position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 5; width: min(220px, 70vw); padding: 8px 10px; border-radius: 6px; background: #111; color: #fff; font-size: 12px; font-weight: 400; line-height: 1.4; }
+  #{{ sid }} .ts-tip:hover .ts-tip__text, #{{ sid }} .ts-tip:focus .ts-tip__text { display: block; }
+  #{{ sid }} .ts-member .ts-tip__text { left: auto; right: -40px; }
+
+  /* Gallery */
+  #{{ sid }} .ts-gal-row { display: grid; grid-template-columns: minmax(0, 1fr) 136px; gap: 8px; }
+  #{{ sid }} .ts-gal-row--solo { grid-template-columns: minmax(0, 1fr); }
+  #{{ sid }} .ts-gal-main { position: relative; overflow: hidden; border-radius: 8px; background: var(--img-bg); }
+  #{{ sid }} .ts-gal-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
+  #{{ sid }} .ts-gal-track::-webkit-scrollbar, #{{ sid }} .ts-thumbs::-webkit-scrollbar { display: none; }
+  #{{ sid }} .ts-slide { display: flex; flex: 0 0 100%; align-items: center; justify-content: center; aspect-ratio: 1; scroll-snap-align: start; }
+  #{{ sid }} .ts-slide img, #{{ sid }} .ts-slide video, #{{ sid }} .ts-slide > svg { width: 100%; height: 100%; object-fit: contain; }
+  #{{ sid }} .ts-gal-badge { position: absolute; top: 4px; left: 4px; z-index: 2; display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; background: {{ section.settings.badge_bg }}; color: {{ section.settings.badge_text_color }}; font-size: 14px; font-weight: 500; line-height: 20px; }
+  #{{ sid }} .ts-arrow { position: absolute; top: 50%; z-index: 2; display: flex; padding: 8px; border: 0; background: none; color: #121212; transform: translateY(-50%); cursor: pointer; }
+  #{{ sid }} .ts-arrow:disabled { color: #b5b5b5; cursor: default; }
+  #{{ sid }} .ts-arrow svg { width: 24px; height: 24px; }
+  #{{ sid }} .ts-arrow--prev { left: 10px; }
+  #{{ sid }} .ts-arrow--next { right: 10px; }
+  #{{ sid }} .ts-features { display: grid; grid-auto-rows: 1fr; gap: 8px; }
+  #{{ sid }} .ts-feature { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 8px; background: var(--card-bg); color: var(--card-text); font-size: 14px; font-weight: 600; line-height: 20px; text-align: center; }
+  #{{ sid }} .ts-feature svg { width: 36px; height: 36px; overflow: visible; stroke-width: 1.3; }
+  #{{ sid }} .ts-feature img { max-width: 56px; max-height: 36px; width: auto; }
+  #{{ sid }} .ts-thumbs { display: flex; gap: 8px; margin-top: 16px; overflow-x: auto; scrollbar-width: none; }
+  #{{ sid }} .ts-thumb { flex: 0 0 100px; height: 100px; padding: 0; overflow: hidden; border: 2px solid transparent; border-radius: 8px; background: var(--img-bg); cursor: pointer; }
+  #{{ sid }} .ts-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+  #{{ sid }} .ts-thumb.is-active { border-color: var(--accent); }
+
+  /* Badge, title, rating, inspired by, highlight */
+  #{{ sid }} .ts-badge { align-self: flex-start; margin-bottom: -7px; padding: 4px 12px; font-size: 14px; font-weight: 700; line-height: 20px; }
+  #{{ sid }} .ts-title { margin: 0; color: #000000; font-size: 36px; font-weight: 700; line-height: 1.2; }
+  #{{ sid }} .ts-title--upper { text-transform: uppercase; }
+  #{{ sid }} .ts-rating { display: flex; align-items: center; gap: 6px; line-height: 22px; }
+  #{{ sid }} .ts-rating__stars { color: var(--star); font-size: 17px; }
+  #{{ sid }} .ts-rating a { color: inherit; text-decoration: none; }
+  #{{ sid }} .ts-insp { display: flex; align-items: center; gap: 8px; }
+  #{{ sid }} .ts-insp img { width: 45px; height: 45px; object-fit: contain; }
+  #{{ sid }} .ts-insp__label { font-size: 14px; line-height: 20px; }
+  #{{ sid }} .ts-insp__name { color: var(--text); font-size: 15px; font-weight: 600; }
+  #{{ sid }} .ts-insp__price { margin-top: 10px; font-size: 14px; }
+  #{{ sid }} .ts-highlight { display: flex; align-items: center; gap: 8px; color: #000; font-weight: 600; line-height: 24px; }
+  #{{ sid }} .ts-highlight svg { width: 24px; height: 24px; flex-shrink: 0; }
+
+  /* Description + scent icons */
+  #{{ sid }} .ts-desc { line-height: 28.8px; }
+  #{{ sid }} .ts-desc p + p { margin-top: 8px; }
+  #{{ sid }} .ts-desc.is-clamped { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: var(--clamp); }
+  #{{ sid }} .ts-desc-links { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 16px; }
+  #{{ sid }} .ts-desc-link { padding: 0; border: 0; background: none; color: #111827; font-family: inherit; font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: 0.6px; text-transform: uppercase; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+  #{{ sid }} .ts-attrs { display: flex; flex-wrap: wrap; gap: 12px 48px; padding: 6px 0; }
+  #{{ sid }} .ts-attr { display: flex; flex-direction: column; align-items: center; gap: 10px; color: #1f2937; font-size: 14px; }
+  #{{ sid }} .ts-attr svg, #{{ sid }} .ts-attr img { width: 48px; height: 48px; stroke-width: 0.9; object-fit: contain; }
+
+  /* Membership */
+  #{{ sid }} .ts-member { display: flex; align-items: center; gap: 10px; padding: 10px; border: 2px solid var(--line); border-radius: 8px; cursor: pointer; }
+  #{{ sid }} .ts-member:has(input:checked) { border-color: var(--accent); }
+  #{{ sid }} .ts-member input { flex-shrink: 0; width: 20px; height: 20px; margin: 0; accent-color: var(--accent); }
+  #{{ sid }} .ts-member img { width: 50px; height: 50px; border-radius: 5px; object-fit: cover; }
+  #{{ sid }} .ts-member__title { display: flex; align-items: center; gap: 6px; color: #0f172a; font-size: 15px; font-weight: 700; }
+  #{{ sid }} .ts-member__sub { display: block; margin-top: 2px; color: #0f172a; font-size: 11px; line-height: 1.3; }
+
+  /* Size picker */
+  #{{ sid }} .ts-sizes__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 14px; }
+  #{{ sid }} .ts-sizes__label { color: var(--text); font-weight: 600; }
+  #{{ sid }} .ts-sizes__hint { color: #6b7280; font-size: 14px; font-style: italic; }
+  #{{ sid }} .ts-sizes__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  #{{ sid }} .ts-size { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 68px; padding: 16px 8px 12px; border: 2px solid #e5e7eb; border-radius: 8px; background: #fff; color: #000; font-family: inherit; cursor: pointer; }
+  #{{ sid }} .ts-size:hover { border-color: #c9ccd1; }
+  #{{ sid }} .ts-size.is-selected { border-color: var(--size-active); }
+  #{{ sid }} .ts-size.is-sold-out { opacity: 0.45; text-decoration: line-through; }
+  #{{ sid }} .ts-size__name { font-size: 14px; font-weight: 600; line-height: 20px; text-transform: uppercase; }
+  #{{ sid }} .ts-size__unit { color: #6b7280; font-size: 12px; line-height: 16px; }
+  #{{ sid }} .ts-size__badge { position: absolute; top: -10px; left: 50%; padding: 2px 8px; border-radius: 4px; color: #fff; font-size: 12px; font-style: italic; line-height: 16px; white-space: nowrap; transform: translateX(-50%); }
+
+  /* Add to cart */
+  #{{ sid }} .ts-atc { position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px 12px; overflow: hidden; border: 0; border-radius: 8px; background: #22613a; color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,.15); font-family: inherit; cursor: pointer; transition: filter .2s, transform .2s, box-shadow .2s; }
+  #{{ sid }} .ts-atc:hover:not(:disabled) { background: #368856; color: #ffffff; }
+  #{{ sid }} .ts-atc:disabled { opacity: .55; cursor: not-allowed; }
+  #{{ sid }} .ts-atc__text { font-size: 24px; line-height: 1.2; }
+  #{{ sid }} .ts-atc__prices { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 4px; background: rgba(0,0,0,.12); font-size: 18px; white-space: nowrap; }
+  #{{ sid }} .ts-atc__prices s { opacity: .5; font-size: 16px; }
+  #{{ sid }} .ts-atc__prices s:empty { display: none; }
+  #{{ sid }} .ts-atc.is-loading > span:not(.ts-atc__spin) { opacity: .4; }
+  #{{ sid }} .ts-atc__spin { display: none; width: 18px; height: 18px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: tsSpin .5s linear infinite; }
+  #{{ sid }} .ts-atc.is-loading .ts-atc__spin { display: inline-block; }
+  #{{ sid }} .ts-atc__shine { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.22) 50%, transparent 60%); transform: translateX(-100%); animation: tsShine 4s ease-in-out infinite; pointer-events: none; }
+  #{{ sid }} .ts-atc-error { margin-top: 8px; color: #c62828; font-size: 14px; }
+  #{{ sid }} .ts-atc-error:empty { display: none; }
+  @keyframes tsSpin { to { transform: rotate(360deg); } }
+  @keyframes tsShine { 0%, 60% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+  /* Payment icons, text, promo card, guarantee */
+  #{{ sid }} .ts-pay { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  #{{ sid }} .ts-pay svg { width: 47px; height: 31px; }
+  #{{ sid }} .ts-text-block { color: #4b5563; font-weight: 600; line-height: 1.5; }
+  #{{ sid }} .ts-promo { display: flex !important; min-height: 237px; overflow: hidden; border: 2px solid var(--promo-border); border-radius: 12px; background: #fff; color: #0f172a !important; text-decoration: none !important; transition: box-shadow .2s, transform .2s; }
+  #{{ sid }} .ts-promo[hidden] { display: none !important; }
+  #{{ sid }} .ts-promo__img { position: relative; flex: 0 0 46%; background: #f3eee8; }
+  #{{ sid }} .ts-promo__img img, #{{ sid }} .ts-promo__img svg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  #{{ sid }} .ts-promo__body { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-width: 0; padding: 16px 20px; }
+  #{{ sid }} .ts-promo__badge { padding: 2px 8px; border-radius: 99px; font-size: 12px; font-weight: 600; line-height: 16px; letter-spacing: .3px; text-transform: uppercase; }
+  #{{ sid }} .ts-promo__title { margin: 8px 0 4px; font-size: 18px; font-weight: 600; line-height: 28px; }
+  #{{ sid }} .ts-promo__text { color: #1f2937; font-size: 15px; }
+  #{{ sid }} .ts-promo__text strong { color: #0f172a; }
+  #{{ sid }} .ts-guarantee { display: flex; align-items: center; gap: 12px; margin-top: 9px; color: #0f172a; line-height: 24px; }
+  #{{ sid }} .ts-guarantee > :first-child { flex-shrink: 0; width: 40px; height: 40px; object-fit: contain; }
+
+  /* Accordions */
+  #{{ sid }} .ts-acc { border-bottom: 1px solid var(--line); }
+  #{{ sid }} :not(.ts-acc) + .ts-acc { margin-top: 9px; border-top: 1px solid var(--line); }
+  #{{ sid }} .ts-acc + .ts-acc { margin-top: -15px; }
+  #{{ sid }} .ts-acc summary { display: flex; align-items: center; gap: 10px; padding: 15px 0; color: var(--text); font-weight: 700; line-height: 24px; list-style: none; cursor: pointer; }
+  #{{ sid }} .ts-acc summary::-webkit-details-marker { display: none; }
+  #{{ sid }} .ts-acc summary svg { width: 20px; height: 20px; flex-shrink: 0; }
+  #{{ sid }} .ts-acc__toggle { position: relative; flex-shrink: 0; width: 24px; height: 24px; margin-left: auto; border-radius: 50%; background: #000; transition: transform .25s; }
+  #{{ sid }} .ts-acc__toggle::before, #{{ sid }} .ts-acc__toggle::after { content: ''; position: absolute; top: 50%; left: 50%; width: 12px; height: 2px; background: #fff; transform: translate(-50%, -50%); }
+  #{{ sid }} .ts-acc__toggle::after { transform: translate(-50%, -50%) rotate(90deg); }
+  #{{ sid }} .ts-acc[open] .ts-acc__toggle { transform: rotate(45deg); }
+  #{{ sid }} .ts-acc__body { padding: 0 10px 20px; font-size: 15px; line-height: 1.75; }
+  #{{ sid }} .ts-acc__body p + p { margin-top: 14px; }
+
+  /* Scent notes content */
+  #{{ sid }} .ts-notes-label { margin-bottom: 22px; color: #6b7280; font-size: 12px; }
+  #{{ sid }} .ts-notes { display: flex; flex-wrap: wrap; gap: 20px 24px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  #{{ sid }} .ts-note { display: flex; flex-direction: column; align-items: center; gap: 12px; color: #1f2937; font-size: 14px; line-height: 20px; }
+  #{{ sid }} .ts-note__img { width: 34px; height: 34px; border-radius: 50%; background: #e5e7eb; }
+  #{{ sid }} .ts-note__img img { width: 100%; height: 100%; object-fit: contain; }
+  #{{ sid }} .ts-note__img:has(img) { background: none; }
+  #{{ sid }} .ts-layers { display: flex; flex-direction: column; gap: 12px; padding: 20px 0; border-bottom: 1px solid var(--line); color: #374151; font-size: 14px; line-height: 20px; }
+  #{{ sid }} .ts-layer { display: flex; gap: 12px; }
+  #{{ sid }} .ts-layer svg { flex-shrink: 0; width: 20px; height: 26px; color: #1f2937; }
+  #{{ sid }} .ts-layer strong { color: #1f2937; }
+  #{{ sid }} .ts-ingredients { padding-top: 20px; color: #374151; font-size: 12px; line-height: 19.5px; }
+  #{{ sid }} .ts-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  #{{ sid }} .ts-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid #e5e7eb; border-radius: 99px; background: #fff; color: #1f2937; font-size: 12px; line-height: 16px; }
+  #{{ sid }} .ts-tag svg { width: 13px; height: 13px; }
+
+  /* Small desktop */
+  @media (min-width: 990px) and (max-width: 1149px) {
+    #{{ sid }} .ts-grid { gap: 28px; }
+    #{{ sid }} .ts-gal-row { grid-template-columns: minmax(0, 1fr) 116px; }
+    #{{ sid }} .ts-feature { padding: 10px 8px; font-size: 13px; }
+    #{{ sid }} .ts-attrs { gap: 12px 32px; }
+    #{{ sid }} .ts-atc__text { font-size: 21px; }
+  }
+  /* Tablet + mobile */
+  @media (max-width: 989px) {
+    #{{ sid }} .ts-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    #{{ sid }} .ts-gallery, #{{ sid }} .ts-info { position: static; width: 100%; max-width: 680px; margin: 0 auto; }
+  }
+  /* Mobile */
+  @media (max-width: 749px) {
+    #{{ sid }} { padding-top: 0; }
+    #{{ sid }} .ts-wrap { padding: 0 16px; }
+    #{{ sid }} .ts-gallery { width: auto; margin: 0 -16px; }
+    #{{ sid }} .ts-gal-row { grid-template-columns: minmax(0, 1fr); }
+    #{{ sid }} .ts-features { display: none; }
+    #{{ sid }} .ts-gal-main { border-radius: 0; }
+    #{{ sid }} .ts-gal-badge { top: 0; left: 18px; }
+    #{{ sid }} .ts-thumbs { gap: 10px; padding: 0 16px; }
+    #{{ sid }} .ts-thumb { flex-basis: 66px; height: 66px; }
+    #{{ sid }} .ts-title { font-size: calc(var(--size) * .67); }
+    #{{ sid }} .ts-rating, #{{ sid }} .ts-desc { font-size: 15px; }
+    #{{ sid }} .ts-highlight { font-size: 14px; }
+    #{{ sid }} .ts-attrs { gap: 12px 24px; }
+    #{{ sid }} .ts-attr svg, #{{ sid }} .ts-attr img { width: 40px; height: 40px; }
+    #{{ sid }} .ts-sizes__grid { gap: 10px; }
+    #{{ sid }} .ts-size__badge { padding: 2px 6px; font-size: 11px; }
+    #{{ sid }} .ts-atc__text { font-size: 20px; }
+    #{{ sid }} .ts-atc__prices { padding: 0 8px; font-size: 16px; }
+    #{{ sid }} .ts-pay svg { width: 40px; height: 27px; }
+    #{{ sid }} .ts-promo { min-height: 210px; }
+    #{{ sid }} .ts-promo__body { padding: 12px 14px; }
+    #{{ sid }} .ts-promo__title { font-size: 15px; line-height: 22px; }
+    #{{ sid }} .ts-guarantee, #{{ sid }} .ts-acc summary { font-size: 15px; }
+  }
+  @media (max-width: 374px) {
+    #{{ sid }} .ts-atc { gap: 6px; padding: 14px 8px; }
+    #{{ sid }} .ts-atc__text { font-size: 17px; }
+    #{{ sid }} .ts-atc__prices s { display: none; }
+    #{{ sid }} .ts-attrs { justify-content: space-between; gap: 12px; }
+  }
+</style>
+
+{%- comment -%} ===== 3. MARKUP ===== {%- endcomment -%}
+<section id="{{ sid }}" data-current="{{ cv.id }}">
+  <div class="ts-wrap">
+    <div class="ts-grid">
+
+      {%- comment -%} Gallery {%- endcomment -%}
+      <div class="ts-gallery" data-gallery data-start="{{ start_index }}">
+        <div class="ts-gal-row{% if feature_count == 0 and auto == false %} ts-gal-row--solo{% endif %}">
+          <div class="ts-gal-main">
+            {%- if section.settings.badge_text != blank -%}
+              <div class="ts-gal-badge">
+                {{ section.settings.badge_text | escape }}
+                {%- if section.settings.badge_tooltip != blank -%}
+                  <span class="ts-tip" tabindex="0">{{ info_icon }}<span class="ts-tip__text">{{ section.settings.badge_tooltip | escape }}</span></span>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            <div class="ts-gal-track" data-track>
+              {%- for media in product.media limit: own_count -%}
+                <div class="ts-slide" data-media-id="{{ media.id }}">
+                  {%- case media.media_type -%}
+                    {%- when 'video' -%}{{ media | video_tag: controls: true, playsinline: true, muted: true }}
+                    {%- when 'external_video' -%}{{ media | external_video_tag }}
+                    {%- else -%}
+                      {%- assign loading = 'lazy' -%}
+                      {%- if forloop.index0 == start_index -%}{%- assign loading = 'eager' -%}{%- endif -%}
+                      {{ media.preview_image | image_url: width: 1200 | image_tag: widths: '500, 750, 1000, 1200', sizes: '(min-width: 990px) 40vw, 100vw', loading: loading }}
+                  {%- endcase -%}
+                </div>
+              {%- endfor -%}
+              {%- if show_extra -%}
+                {%- for block in section.blocks -%}
+                  {%- if block.type == 'gallery_image' and block.settings.image != blank -%}
+                    <div class="ts-slide" {{ block.shopify_attributes }}>{{ block.settings.image | image_url: width: 1200 | image_tag: widths: '500, 750, 1000, 1200', sizes: '(min-width: 990px) 40vw, 100vw', loading: 'lazy' }}</div>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+              {%- if total_slides == 0 -%}<div class="ts-slide">{{ 'product-1' | placeholder_svg_tag }}</div>{%- endif -%}
+            </div>
+
+            {%- if total_slides > 1 -%}
+              <button type="button" class="ts-arrow ts-arrow--prev" data-prev aria-label="Föregående bild">{{ svg }}<path d="M15 5l-7 7 7 7"/></svg></button>
+              <button type="button" class="ts-arrow ts-arrow--next" data-next aria-label="Nästa bild">{{ svg }}<path d="M9 5l7 7-7 7"/></svg></button>
+            {%- endif -%}
+          </div>
+
+          {%- if feature_count > 0 -%}
+            <div class="ts-features">
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'gallery_feature' -%}
+                  {%- assign i = nil -%}{%- for n in icon_names -%}{%- if n == block.settings.icon -%}{%- assign i = forloop.index0 -%}{%- endif -%}{%- endfor -%}
+                  <div class="ts-feature" {{ block.shopify_attributes }}>
+                    {%- if block.settings.image != blank -%}
+                      {{ block.settings.image | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}
+                    {%- else -%}
+                      {{ svg }}{{ icon_paths[i] }}</svg>
+                    {%- endif -%}
+                    <span>{{ block.settings.text | escape }}</span>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- elsif auto -%}
+            {%- comment -%} Feature cards from the section settings (Feature cards 1–3) {%- endcomment -%}
+            <div class="ts-features">
+              {%- for c in (1..3) -%}
+                {%- liquid
+                  assign c_text = 'feature_' | append: c | append: '_text'
+                  assign c_icon = 'feature_' | append: c | append: '_icon'
+                  assign c_image = 'feature_' | append: c | append: '_image'
+                  assign c_svg = blank
+                  for n in icon_names
+                    if n == section.settings[c_icon]
+                      assign c_svg = icon_paths[forloop.index0]
+                    endif
+                  endfor
+                -%}
+                {%- if section.settings[c_text] != blank or section.settings[c_image] != blank -%}
+                  <div class="ts-feature">
+                    {%- if section.settings[c_image] != blank -%}
+                      {{ section.settings[c_image] | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}
+                    {%- elsif c_svg != blank -%}
+                      {{ svg }}{{ c_svg }}</svg>
+                    {%- endif -%}
+                    {%- if section.settings[c_text] != blank -%}<span>{{ section.settings[c_text] | escape }}</span>{%- endif -%}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- if total_slides > 1 -%}
+          <div class="ts-thumbs">
+            {%- for media in product.media limit: own_count -%}
+              <button type="button" class="ts-thumb{% if forloop.index0 == start_index %} is-active{% endif %}" data-thumb aria-label="Bild {{ forloop.index }}">
+                {{- media.preview_image | image_url: width: 200 | image_tag: loading: 'lazy', alt: '' -}}
+              </button>
+            {%- endfor -%}
+            {%- if show_extra -%}
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'gallery_image' and block.settings.image != blank -%}
+                  <button type="button" class="ts-thumb" data-thumb aria-label="Bild">
+                    {{- block.settings.image | image_url: width: 200 | image_tag: loading: 'lazy', alt: '' -}}
+                  </button>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Product info (blocks) {%- endcomment -%}
+      <div class="ts-info">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign bs = block.settings
+            assign icon = blank
+            for n in icon_names
+              if n == bs.icon
+                assign icon = icon_paths[forloop.index0]
+              endif
+            endfor
+          -%}
+          {%- case block.type -%}
+
+            {%- when 'eyebrow' -%}
+              {%- liquid
+                assign label = bs.label
+                if label contains '[percent]'
+                  if cv.compare_at_price > cv.price
+                    assign saved = cv.compare_at_price | minus: cv.price | times: 100.0 | divided_by: cv.compare_at_price | round
+                    assign label = label | replace: '[percent]', saved
+                  else
+                    assign label = blank
+                  endif
+                endif
+              -%}
+              {%- if label != blank -%}
+                <span class="ts-badge" style="background: {{ bs.color }}; color: {{ bs.text_color }};" {{ block.shopify_attributes }}>{{ label | escape }}</span>
+              {%- endif -%}
+
+            {%- when 'title' -%}
+              <h1 class="ts-title{% if bs.uppercase %} ts-title--upper{% endif %}" style="--size: {{ bs.size }}px;" {{ block.shopify_attributes }}>{{ product.title | escape }}</h1>
+
+            {%- when 'rating' -%}
+              <div class="ts-rating" {{ block.shopify_attributes }}>
+                {%- if bs.show_stars -%}<span class="ts-rating__stars" aria-hidden="true">★★★★★</span>{%- endif -%}
+                {%- if bs.link != blank -%}<a href="{{ bs.link }}">{{ bs.text | escape }}</a>{%- else -%}<span>{{ bs.text | escape }}</span>{%- endif -%}
+              </div>
+
+            {%- when 'inspired_by' -%}
+              {%- liquid
+                # Read product metafields, fall back to the block's own fields
+                assign name = bs.name
+                assign img = bs.image
+                assign price = bs.price
+                assign brand = blank
+                if bs.use_metafields
+                  assign k = bs.inspiration_key | strip | split: '.'
+                  assign f = product.metafields[k[0]][k[1]]
+                  if f.type == 'metaobject_reference'
+                    assign name = f.value.name.value | default: f.value.title.value | default: name
+                    assign img = f.value.image.value | default: img
+                  elsif f.type == 'product_reference'
+                    assign name = f.value.title
+                    assign img = f.value.featured_image | default: img
+                  elsif f != blank
+                    assign name = f.value
+                  endif
+                  assign k = bs.brand_key | strip | split: '.'
+                  assign brand = product.metafields[k[0]][k[1]].value
+                  assign k = bs.price_key | strip | split: '.'
+                  assign f = product.metafields[k[0]][k[1]]
+                  if f.type == 'money'
+                    assign price = f.value | money
+                  elsif f.type == 'number_decimal' or f.type == 'number_integer'
+                    assign price = f.value | times: 100 | money
+                  elsif f != blank
+                    assign price = f.value
+                  endif
+                endif
+                if brand != blank and name != blank
+                  unless name contains brand
+                    assign name = brand | append: ' ' | append: name
+                  endunless
+                endif
+              -%}
+              {%- if name != blank -%}
+                <div {{ block.shopify_attributes }}>
+                  <div class="ts-insp">
+                    {%- if img != blank -%}{{ img | image_url: width: 120 | image_tag: loading: 'lazy', alt: name }}{%- endif -%}
+                    <div>
+                      <p class="ts-insp__label">{{ bs.label | escape }}</p>
+                      <p class="ts-insp__name">{{ name | escape }}</p>
+                    </div>
+                  </div>
+                  {%- if price != blank -%}<p class="ts-insp__price">({{ bs.price_label | escape }} {{ price }})</p>{%- endif -%}
+                </div>
+              {%- endif -%}
+
+            {%- when 'highlight' -%}
+              <div class="ts-highlight" {{ block.shopify_attributes }}>
+                {%- if icon != blank -%}{{ svg }}{{ icon }}</svg>{%- endif -%}
+                <span>{{ bs.text | escape }}</span>
+              </div>
+
+            {%- when 'description' -%}
+              <div data-desc {{ block.shopify_attributes }}>
+                <div class="ts-desc{% if bs.clamp_lines > 0 %} is-clamped{% endif %}" style="--clamp: {{ bs.clamp_lines }};" data-desc-text>
+                  {{- bs.custom_text | default: product.description -}}
+                </div>
+                <div class="ts-desc-links">
+                  {%- if bs.more_text != blank -%}
+                    <button type="button" class="ts-desc-link" data-desc-toggle data-more="{{ bs.more_text | escape }}" data-less="{{ bs.less_text | escape }}">{{ bs.more_text | escape }}</button>
+                  {%- endif -%}
+                  {%- if bs.link_text != blank -%}
+                    <a class="ts-desc-link" href="{{ bs.link_url | default: '#' }}">{{ bs.link_text | escape }}</a>
+                  {%- endif -%}
+                </div>
+              </div>
+              {%- if attrs_count == 0 and auto -%}
+                <div class="ts-attrs">
+                  <div class="ts-attr">{{ svg }}{{ icon_paths[8] }}</svg><span>Fräsch</span></div>
+                  <div class="ts-attr">{{ svg }}{{ icon_paths[9] }}</svg><span>Dagtid</span></div>
+                  <div class="ts-attr">{{ svg }}{{ icon_paths[10] }}</svg><span>Sommar</span></div>
+                  <div class="ts-attr">{{ svg }}{{ icon_paths[13] }}</svg><span>Strong</span></div>
+                </div>
+              {%- endif -%}
+
+            {%- when 'scent_attributes' -%}
+              <div class="ts-attrs" {{ block.shopify_attributes }}>
+                {%- for n in (1..4) -%}
+                  {%- liquid
+                    assign a_label = 'label_' | append: n
+                    assign a_icon = 'icon_' | append: n
+                    assign a_image = 'image_' | append: n
+                    assign a_svg = blank
+                    for name in icon_names
+                      if name == bs[a_icon]
+                        assign a_svg = icon_paths[forloop.index0]
+                      endif
+                    endfor
+                  -%}
+                  {%- if bs[a_label] != blank -%}
+                    <div class="ts-attr">
+                      {%- if bs[a_image] != blank -%}
+                        {{ bs[a_image] | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}
+                      {%- elsif a_svg != blank -%}
+                        {{ svg }}{{ a_svg }}</svg>
+                      {%- endif -%}
+                      <span>{{ bs[a_label] | escape }}</span>
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+
+            {%- when 'membership' -%}
+              {%- liquid
+                assign m_variant = blank
+                assign m_plan = blank
+                if bs.mode == 'product' and bs.member_product != blank
+                  assign m_variant = bs.member_product.selected_or_first_available_variant
+                  assign m_plan = m_variant.selling_plan_allocations.first.selling_plan.id
+                endif
+              -%}
+              <label class="ts-member" {{ block.shopify_attributes }}>
+                <input type="checkbox" data-member data-mode="{{ bs.mode }}" data-variant="{{ m_variant.id }}" data-plan="{{ m_plan }}"{% if bs.checked %} checked{% endif %}>
+                {%- if bs.image != blank -%}{{ bs.image | image_url: width: 100 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}
+                <span>
+                  <span class="ts-member__title">
+                    {{ bs.title | escape }}
+                    {%- if bs.tooltip != blank -%}<span class="ts-tip" tabindex="0">{{ info_icon }}<span class="ts-tip__text">{{ bs.tooltip | escape }}</span></span>{%- endif -%}
+                  </span>
+                  {%- if bs.subtitle != blank -%}<span class="ts-member__sub">{{ bs.subtitle | escape }}</span>{%- endif -%}
+                </span>
+              </label>
+
+            {%- when 'variant_picker' -%}
+              {%- unless product.has_only_default_variant -%}
+                {%- liquid
+                  assign badge_1 = bs.badge_1_value | downcase | remove: ' '
+                  assign badge_2 = bs.badge_2_value | downcase | remove: ' '
+                -%}
+                <div {{ block.shopify_attributes }}>
+                  <div class="ts-sizes__head">
+                    <span class="ts-sizes__label">{{ bs.heading | escape }}</span>
+                    {%- if bs.hint != blank -%}<span class="ts-sizes__hint">{{ bs.hint | escape }}</span>{%- endif -%}
+                  </div>
+                  <div class="ts-sizes__grid" role="radiogroup">
+                    {%- for v in product.variants -%}
+                      {%- liquid
+                        assign key = v.title | downcase | remove: ' '
+                        assign ml = key | remove: 'ml' | replace: ',', '.' | times: 1.0
+                      -%}
+                      <button type="button" role="radio" class="ts-size{% if v.id == cv.id %} is-selected{% endif %}{% unless v.available %} is-sold-out{% endunless %}" aria-checked="{% if v.id == cv.id %}true{% else %}false{% endif %}" data-variant-id="{{ v.id }}">
+                        {%- if key == badge_1 and bs.badge_1_text != blank -%}
+                          <span class="ts-size__badge" style="background: {{ bs.badge_1_color }};">{{ bs.badge_1_text | escape }}</span>
+                        {%- elsif key == badge_2 and bs.badge_2_text != blank -%}
+                          <span class="ts-size__badge" style="background: {{ bs.badge_2_color }};">{{ bs.badge_2_text | escape }}</span>
+                        {%- endif -%}
+                        <span class="ts-size__name">{{ v.title | escape }}</span>
+                        {%- if bs.show_unit_price -%}
+                          {%- if v.unit_price_measurement -%}
+                            <span class="ts-size__unit">{{ v.unit_price | money }} / {{ v.unit_price_measurement.reference_unit }}</span>
+                          {%- elsif ml > 0 -%}
+                            <span class="ts-size__unit">{{ v.price | divided_by: ml | round | money }} / ml</span>
+                          {%- endif -%}
+                        {%- endif -%}
+                      </button>
+                    {%- endfor -%}
+                  </div>
+                </div>
+              {%- endunless -%}
+
+            {%- when 'buy_buttons' -%}
+              <div style="--btn-bg: {{ bs.button_color }}; --btn-text: {{ bs.button_text_color }};" {{ block.shopify_attributes }}>
+                <button type="button" class="ts-atc" data-atc data-add="{{ bs.button_text | escape }}" data-sold="{{ bs.sold_out_text | escape }}"{% unless cv.available %} disabled{% endunless %}>
+                  <span class="ts-atc__text" data-atc-text>{% if cv.available %}{{ bs.button_text | escape }}{% else %}{{ bs.sold_out_text | escape }}{% endif %}</span>
+                  {%- if bs.show_price -%}
+                    <span class="ts-atc__prices"><s data-compare>{% if cv.compare_at_price > cv.price %}{{ cv.compare_at_price | money }}{% endif %}</s><span data-price>{{ cv.price | money }}</span></span>
+                  {%- endif -%}
+                  <span class="ts-atc__spin"></span>
+                  {%- if bs.shine -%}<span class="ts-atc__shine"></span>{%- endif -%}
+                </button>
+                <p class="ts-atc-error" role="alert" data-error></p>
+                {%- if bs.show_dynamic_checkout -%}
+                  {%- form 'product', product -%}
+                    <input type="hidden" name="id" value="{{ cv.id }}" data-variant-input>
+                    {{ form | payment_button }}
+                  {%- endform -%}
+                {%- endif -%}
+              </div>
+
+            {%- when 'payment_icons' -%}
+              <ul class="ts-pay" {{ block.shopify_attributes }}>
+                {%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}
+              </ul>
+
+            {%- when 'text' -%}
+              <div class="ts-text-block" style="text-align: {{ bs.align }}; font-size: {{ bs.size }}px;" {{ block.shopify_attributes }}>{{ bs.text }}</div>
+
+            {%- when 'promo_card' -%}
+              {%- comment -%} Up to 12 random products are rendered; the script shows one {%- endcomment -%}
+              {%- assign count = 0 -%}
+              <div data-promo style="--promo-border: {{ bs.border_color }};" {{ block.shopify_attributes }}>
+                {%- for p in collections['all'].products limit: 40 -%}
+                  {%- if p.id == product.id or p.available == false -%}{%- continue -%}{%- endif -%}
+                  {%- if count >= 12 -%}{%- break -%}{%- endif -%}
+                  {%- liquid
+                    assign count = count | plus: 1
+                    assign badge = bs.badge
+                    if badge contains '[percent]'
+                      if p.compare_at_price > p.price
+                        assign saved = p.compare_at_price | minus: p.price | times: 100.0 | divided_by: p.compare_at_price | round
+                        assign badge = badge | replace: '[percent]', saved
+                      else
+                        assign badge = blank
+                      endif
+                    endif
+                    assign p_price = p.price | money
+                  -%}
+                  <a href="{{ p.url }}" class="ts-promo"{% if count > 1 %} hidden{% endif %}>
+                    <div class="ts-promo__img">
+                      {%- if p.featured_image -%}{{ p.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: p.title }}{%- else -%}{{ 'product-1' | placeholder_svg_tag }}{%- endif -%}
+                    </div>
+                    <div class="ts-promo__body">
+                      {%- if badge != blank -%}<span class="ts-promo__badge" style="background: {{ bs.badge_color }}; color: {{ bs.badge_text_color }};">{{ badge | escape }}</span>{%- endif -%}
+                      <p class="ts-promo__title">{{ bs.title | default: p.title | escape }}</p>
+                      <div class="ts-promo__text">{{ bs.text | replace: '[price]', p_price }}</div>
+                    </div>
+                  </a>
+                {%- endfor -%}
+              </div>
+
+            {%- when 'guarantee' -%}
+              <div class="ts-guarantee" {{ block.shopify_attributes }}>
+                {%- if bs.image != blank -%}
+                  {{ bs.image | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}
+                {%- else -%}
+                  <svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#e3efe6" stroke="#b9d3c0" stroke-dasharray="2 2"/><path d="M13 18.5h3v9h-3zM16 26.5l2 1h6.2a1.8 1.8 0 0 0 1.8-1.5l1-5.5a1.8 1.8 0 0 0-1.8-2.1H21l.6-3.1a1.6 1.6 0 0 0-1.6-1.9l-4 6.1" stroke="#5b8f6a" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+                {%- endif -%}
+                <div><strong>{{ bs.title | escape }}</strong><br>{{ bs.text | escape }}</div>
+              </div>
+
+            {%- when 'notes_accordion' -%}
+              <details class="ts-acc" data-notes{% if bs.open %} open{% endif %} {{ block.shopify_attributes }}>
+                <summary>{% if icon != blank %}{{ svg }}{{ icon }}</svg>{% endif %}{{ bs.title | escape }}<span class="ts-acc__toggle"></span></summary>
+                <div class="ts-acc__body">
+                  {%- if bs.note_name_1 != blank -%}
+                    <p class="ts-notes-label">{{ bs.main_label | escape }}</p>
+                    <div class="ts-notes">
+                      {%- for n in (1..6) -%}
+                        {%- assign n_name = 'note_name_' | append: n -%}
+                        {%- assign n_img = 'note_image_' | append: n -%}
+                        {%- if bs[n_name] != blank -%}
+                          <div class="ts-note">
+                            <span class="ts-note__img">{% if bs[n_img] != blank %}{{ bs[n_img] | image_url: width: 100 | image_tag: loading: 'lazy', alt: '' }}{% endif %}</span>
+                            {{ bs[n_name] | escape }}
+                          </div>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+                  <div class="ts-layers">
+                    {%- for layer in (1..3) -%}
+                      {%- liquid
+                        case layer
+                          when 1
+                            assign l = 'top'
+                            assign fill = 16
+                          when 2
+                            assign l = 'heart'
+                            assign fill = 12
+                          else
+                            assign l = 'base'
+                            assign fill = 8
+                        endcase
+                        assign l_label = l | append: '_label'
+                        assign l_notes = l | append: '_notes'
+                        assign l_desc = l | append: '_desc'
+                      -%}
+                      {%- if bs[l_notes] != blank -%}
+                        <div class="ts-layer">
+                          <svg viewBox="0 0 18 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="6.5" y="1" width="5" height="3" rx=".5"/><rect x="2" y="4" width="14" height="19" rx="2"/><rect x="3.5" y="{{ fill }}" width="11" height="{{ 22 | minus: fill }}" rx="1" fill="currentColor" stroke="none"/></svg>
+                          <div><strong>{{ bs[l_label] | escape }}</strong> {{ bs[l_notes] | escape }}<br>{{ bs[l_desc] | escape }}</div>
+                        </div>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                  {%- if bs.ingredients != blank -%}
+                    <p class="ts-ingredients"><strong>{{ bs.ingredients_label | escape }}</strong> {{ bs.ingredients | escape }}</p>
+                  {%- endif -%}
+                  <div class="ts-tags">
+                    {%- if bs.tag_1 != blank -%}<span class="ts-tag">{{ svg }}{{ icon_paths[8] }}</svg>{{ bs.tag_1 | escape }}</span>{%- endif -%}
+                    {%- if bs.tag_2 != blank -%}<span class="ts-tag">{{ svg }}{{ icon_paths[4] }}</svg>{{ bs.tag_2 | escape }}</span>{%- endif -%}
+                    {%- if bs.tag_3 != blank -%}<span class="ts-tag">{{ svg }}{{ icon_paths[6] }}</svg>{{ bs.tag_3 | escape }}</span>{%- endif -%}
+                  </div>
+                </div>
+              </details>
+
+            {%- when 'faq_item' -%}
+              <details class="ts-acc"{% if bs.open %} open{% endif %} {{ block.shopify_attributes }}>
+                <summary>{% if icon != blank %}{{ svg }}{{ icon }}</svg>{% endif %}{{ bs.question | escape }}<span class="ts-acc__toggle"></span></summary>
+                <div class="ts-acc__body">{{ bs.answer }}</div>
+              </details>
+
+            {%- when 'custom_liquid' -%}
+              <div {{ block.shopify_attributes }}>{{ bs.custom_liquid }}</div>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" data-variants>
+    [{%- for v in product.variants -%}
+      {"id": {{ v.id }}, "available": {{ v.available | json }}, "price": {{ v.price | money | json }},
+       "compare": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}""{% endif %},
+       "planPrice": {% if v.selling_plan_allocations.size > 0 %}{{ v.selling_plan_allocations.first.price | money | json }}{% else %}""{% endif %}, "planId": {{ v.selling_plan_allocations.first.selling_plan.id | default: 'null' }},
+       "media": {{ v.featured_media.id | default: 'null' }}}{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}]
+  </script>
+</section>
+
+{%- comment -%} ===== 4. SCRIPT ===== {%- endcomment -%}
+<script>
+(() => {
+  const root = document.getElementById({{ sid | json }});
+  if (!root || root.dataset.ready) return;
+  root.dataset.ready = '1';
+  const $ = (s) => root.querySelector(s);
+  const $$ = (s) => [...root.querySelectorAll(s)];
+
+  /* Gallery */
+  const track = $('[data-track]');
+  const slides = track ? [...track.children] : [];
+  const thumbs = $$('[data-thumb]');
+  const prev = $('[data-prev]');
+  const next = $('[data-next]');
+  let current = 0;
+
+  const setActive = (i) => {
+    current = i;
+    if (prev) prev.disabled = i === 0;
+    if (next) next.disabled = i === slides.length - 1;
+    thumbs.forEach((t, n) => t.classList.toggle('is-active', n === i));
+    thumbs[i]?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    slides.forEach((s, n) => n !== i && s.querySelector('video')?.pause());
+  };
+  const goTo = (i, smooth = true) => {
+    if (!slides.length) return;
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft, behavior: smooth ? 'smooth' : 'auto' });
+    setActive(i);
+  };
+  if (slides.length) {
+    let timer;
+    track.addEventListener('scroll', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const i = Math.round(track.scrollLeft / track.clientWidth);
+        if (i !== current) setActive(i);
+      }, 60);
+    }, { passive: true });
+    prev?.addEventListener('click', () => goTo(current - 1));
+    next?.addEventListener('click', () => goTo(current + 1));
+    thumbs.forEach((t, n) => t.addEventListener('click', () => goTo(n)));
+    addEventListener('resize', () => goTo(current, false));
+    requestAnimationFrame(() => goTo(+$('[data-gallery]').dataset.start || 0, false));
+  }
+
+  /* Description: read more, or open "Så Doftar Den" when the text already fits */
+  $$('[data-desc]').forEach((box) => {
+    const text = box.querySelector('[data-desc-text]');
+    const btn = box.querySelector('[data-desc-toggle]');
+    const notes = $('[data-notes]');
+    if (!btn) return;
+    let fits = false;
+    requestAnimationFrame(() => {
+      fits = text.scrollHeight <= text.clientHeight + 2;
+      if (fits && !notes) btn.hidden = true;
+    });
+    btn.addEventListener('click', () => {
+      if (fits && notes) {
+        notes.open = true;
+        notes.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      const open = !text.classList.toggle('is-clamped');
+      btn.textContent = open ? btn.dataset.less : btn.dataset.more;
+    });
+  });
+
+  /* Random product card */
+  $$('[data-promo]').forEach((box) => {
+    const cards = [...box.children];
+    const pick = Math.floor(Math.random() * cards.length);
+    cards.forEach((c, n) => { c.hidden = n !== pick; });
+  });
+
+  /* Size picker + price */
+  const variants = JSON.parse($('[data-variants]').textContent);
+  const member = $('[data-member]');
+  const atc = $('[data-atc]');
+  const error = $('[data-error]');
+  let variant = variants.find((v) => v.id === +root.dataset.current) || variants[0];
+
+  const render = () => {
+    const plan = member?.checked && member.dataset.mode === 'selling_plan' && variant.planPrice;
+    $$('[data-price]').forEach((el) => { el.textContent = plan ? variant.planPrice : variant.price; });
+    $$('[data-compare]').forEach((el) => { el.textContent = plan ? variant.price : variant.compare; });
+    $$('[data-variant-input]').forEach((el) => { el.value = variant.id; });
+    if (atc) {
+      atc.disabled = !variant.available;
+      $('[data-atc-text]').textContent = variant.available ? atc.dataset.add : atc.dataset.sold;
+    }
+  };
+  $$('[data-variant-id]').forEach((btn) => btn.addEventListener('click', () => {
+    variant = variants.find((v) => v.id === +btn.dataset.variantId);
+    $$('[data-variant-id]').forEach((b) => {
+      b.classList.toggle('is-selected', b === btn);
+      b.setAttribute('aria-checked', b === btn);
+    });
+    render();
+    if (error) error.textContent = '';
+    const slide = slides.findIndex((s) => s.dataset.mediaId == variant.media);
+    if (variant.media && slide > -1) goTo(slide);
+    const url = new URL(location.href);
+    url.searchParams.set('variant', variant.id);
+    history.replaceState({}, '', url);
+  }));
+  member?.addEventListener('change', render);
+  render();
+
+  /* Add to cart (opens the Dawn cart drawer / popup when available) */
+  atc?.addEventListener('click', async () => {
+    const item = { id: variant.id, quantity: 1 };
+    const items = [item];
+    if (member?.checked) {
+      if (member.dataset.mode === 'selling_plan' && variant.planId) item.selling_plan = variant.planId;
+      if (member.dataset.mode === 'product' && member.dataset.variant) {
+        items.push({ id: +member.dataset.variant, quantity: 1, ...(member.dataset.plan && { selling_plan: +member.dataset.plan }) });
+      }
+    }
+    const cart = document.querySelector('cart-drawer, cart-notification');
+    const body = { items };
+    if (cart?.getSectionsToRender) {
+      body.sections = cart.getSectionsToRender().map((s) => s.id);
+      body.sections_url = location.pathname;
+      cart.setActiveElement?.(document.activeElement);
+    }
+    atc.classList.add('is-loading');
+    atc.disabled = true;
+    try {
+      const res = await fetch((window.routes?.cart_add_url || '/cart/add') + '.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (!res.ok || data.status) throw new Error(data.description || data.message);
+      if (cart?.renderContents) {
+        cart.renderContents({ ...(data.items?.[0] || data), sections: data.sections });
+        cart.classList.remove('is-empty');
+      } else {
+        location.href = window.routes?.cart_url || '/cart';
+      }
+      document.dispatchEvent(new CustomEvent('cart:updated', { detail: data }));
+    } catch (e) {
+      if (error) error.textContent = e.message || 'Något gick fel. Försök igen.';
+    } finally {
+      atc.classList.remove('is-loading');
+      render();
+    }
+  });
+})();
+</script>
+
+{%- comment -%} ===== 5. SCHEMA ===== {%- endcomment -%}
+{% schema %}
+{
+  "name": "TryScent Product Page",
+  "tag": "div",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "header", "content": "Gallery" },
+    { "type": "text", "id": "badge_text", "label": "Image badge text", "default": "≈95 % Doftmatch" },
+    { "type": "text", "id": "badge_tooltip", "label": "Image badge tooltip", "default": "Baserat på verifierade kundbetyg av doftlikhet." },
+    { "type": "color", "id": "badge_bg", "label": "Image badge background", "default": "#22613a" },
+    { "type": "color", "id": "badge_text_color", "label": "Image badge text", "default": "#ffffff" },
+    { "type": "color", "id": "gallery_bg", "label": "Image background", "default": "#ffffff" },
+    { "type": "color", "id": "card_bg", "label": "Feature card background", "default": "#ebf4ef" },
+    { "type": "color", "id": "card_text", "label": "Feature card text + icon", "default": "#226139" },
+    { "type": "header", "content": "Feature cards (next to the image)" },
+    { "type": "paragraph", "content": "Upload an image to replace the icon. Leave text and image empty to hide a card. Hidden on mobile, like TryScent." },
+    { "type": "image_picker", "id": "feature_1_image", "label": "Card 1 image" },
+    { "type": "select", "id": "feature_1_icon", "label": "Card 1 icon", "default": "bottle", "options": [ { "value": "bottle", "label": "Bottle" }, { "value": "stars", "label": "Stars" }, { "value": "shield", "label": "Shield" }, { "value": "truck", "label": "Truck" }, { "value": "heart", "label": "Heart" }, { "value": "check", "label": "Check" }, { "value": "leaf", "label": "Leaf" }, { "value": "none", "label": "No icon" } ] },
+    { "type": "text", "id": "feature_1_text", "label": "Card 1 text", "default": "Samma doft bättre pris" },
+    { "type": "image_picker", "id": "feature_2_image", "label": "Card 2 image" },
+    { "type": "select", "id": "feature_2_icon", "label": "Card 2 icon", "default": "stars", "options": [ { "value": "bottle", "label": "Bottle" }, { "value": "stars", "label": "Stars" }, { "value": "shield", "label": "Shield" }, { "value": "truck", "label": "Truck" }, { "value": "heart", "label": "Heart" }, { "value": "check", "label": "Check" }, { "value": "leaf", "label": "Leaf" }, { "value": "none", "label": "No icon" } ] },
+    { "type": "text", "id": "feature_2_text", "label": "Card 2 text", "default": "10 000+ nöjda köpare" },
+    { "type": "image_picker", "id": "feature_3_image", "label": "Card 3 image" },
+    { "type": "select", "id": "feature_3_icon", "label": "Card 3 icon", "default": "shield", "options": [ { "value": "bottle", "label": "Bottle" }, { "value": "stars", "label": "Stars" }, { "value": "shield", "label": "Shield" }, { "value": "truck", "label": "Truck" }, { "value": "heart", "label": "Heart" }, { "value": "check", "label": "Check" }, { "value": "leaf", "label": "Leaf" }, { "value": "none", "label": "No icon" } ] },
+    { "type": "text", "id": "feature_3_text", "label": "Card 3 text", "default": "60 dagars pengarna-tillbaka-garanti" },
+    { "type": "checkbox", "id": "auto_defaults", "label": "Show feature cards + scent icons", "info": "Untick to hide them. 'Gallery feature card' blocks, if added, replace the cards above.", "default": true },
+    { "type": "header", "content": "Default gallery images" },
+    { "type": "paragraph", "content": "Add 'Gallery image' blocks to upload images once. They show on every product page." },
+    { "type": "select", "id": "default_mode", "label": "How to use them", "default": "replace", "options": [
+      { "value": "replace", "label": "Main product image + these images" },
+      { "value": "append", "label": "All product images + these images" },
+      { "value": "fill", "label": "Only on products with few images" } ] },
+    { "type": "range", "id": "default_when", "label": "Few images = this many or fewer", "min": 1, "max": 6, "step": 1, "default": 1 },
+    { "type": "text", "id": "default_variant", "label": "Pre-selected size", "info": "e.g. 100ml. Empty = first available.", "default": "100ml" },
+    { "type": "checkbox", "id": "use_figtree", "label": "Use Figtree font (same as TryScent)", "info": "Turn off to use your theme font.", "default": true },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Page background", "default": "#faf9f6" },
+    { "type": "color", "id": "text_color", "label": "Headings", "default": "#121212" },
+    { "type": "color", "id": "muted_color", "label": "Body text", "default": "#4d4d4c" },
+    { "type": "color", "id": "border_color", "label": "Borders + lines", "default": "#e5e7eb" },
+    { "type": "color", "id": "accent_color", "label": "Accent (thumbnail, checkbox)", "default": "#226139" },
+    { "type": "color", "id": "size_active_color", "label": "Selected size border", "default": "#15803d" },
+    { "type": "color", "id": "star_color", "label": "Stars", "default": "#f5b301" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "max_width", "label": "Max width", "min": 1000, "max": 1600, "step": 20, "unit": "px", "default": 1100 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 36 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "blocks": [
+    { "type": "gallery_image", "name": "Gallery image", "limit": 12, "settings": [
+      { "type": "image_picker", "id": "image", "label": "Image", "info": "Shown on every product, after the main image." } ] },
+    { "type": "gallery_feature", "name": "Gallery feature card", "limit": 3, "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "default": "bottle", "options": [
+        { "value": "bottle", "label": "Bottle" }, { "value": "stars", "label": "Stars" }, { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" }, { "value": "heart", "label": "Heart" }, { "value": "check", "label": "Check" } ] },
+      { "type": "image_picker", "id": "image", "label": "Image (replaces icon)" },
+      { "type": "text", "id": "text", "label": "Text", "default": "Samma doft bättre pris" } ] },
+    { "type": "eyebrow", "name": "Badge", "limit": 1, "settings": [
+      { "type": "text", "id": "label", "label": "Text", "info": "[percent] = discount %. Hidden when there is no discount.", "default": "[percent]% rabatt" },
+      { "type": "color", "id": "color", "label": "Background", "default": "#dc2626" },
+      { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" } ] },
+    { "type": "title", "name": "Title", "limit": 1, "settings": [
+      { "type": "checkbox", "id": "uppercase", "label": "Uppercase", "default": false },
+      { "type": "range", "id": "size", "label": "Font size (mobile = 2/3)", "min": 18, "max": 40, "step": 1, "unit": "px", "default": 30 } ] },
+    { "type": "rating", "name": "Rating", "limit": 1, "settings": [
+      { "type": "checkbox", "id": "show_stars", "label": "Show stars", "default": true },
+      { "type": "text", "id": "text", "label": "Text", "default": "4,9/5 baserat på över 10 000 recensioner" },
+      { "type": "url", "id": "link", "label": "Link" } ] },
+    { "type": "inspired_by", "name": "Inspired by", "limit": 1, "settings": [
+      { "type": "text", "id": "label", "label": "Label", "default": "Inspirerad av:" },
+      { "type": "text", "id": "price_label", "label": "Price label", "default": "Designerpris:" },
+      { "type": "checkbox", "id": "use_metafields", "label": "Read from product metafields", "default": true },
+      { "type": "text", "id": "inspiration_key", "label": "Inspiration metafield", "default": "custom.inspiration" },
+      { "type": "text", "id": "brand_key", "label": "Brand metafield", "default": "custom.nuta" },
+      { "type": "text", "id": "price_key", "label": "Designer price metafield", "default": "custom.designer_price" },
+      { "type": "header", "content": "Fallback" },
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "text", "id": "name", "label": "Name" },
+      { "type": "text", "id": "price", "label": "Designer price" } ] },
+    { "type": "highlight", "name": "Highlight line", "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "default": "timer", "options": [
+        { "value": "timer", "label": "Timer" }, { "value": "check", "label": "Check" }, { "value": "star", "label": "Star" }, { "value": "leaf", "label": "Leaf" } ] },
+      { "type": "text", "id": "text", "label": "Text", "default": "95% doftlikhet. Upp till 12 timmars hållbarhet." } ] },
+    { "type": "description", "name": "Description", "limit": 1, "settings": [
+      { "type": "richtext", "id": "custom_text", "label": "Custom text", "info": "Empty = product description." },
+      { "type": "range", "id": "clamp_lines", "label": "Lines before 'read more' (0 = all)", "min": 0, "max": 10, "step": 1, "default": 3 },
+      { "type": "text", "id": "more_text", "label": "Read more text", "default": "Fullständig beskrivning" },
+      { "type": "text", "id": "less_text", "label": "Read less text", "default": "Visa mindre" },
+      { "type": "text", "id": "link_text", "label": "Extra link text", "default": "Rent märke" },
+      { "type": "url", "id": "link_url", "label": "Extra link" } ] },
+    { "type": "scent_attributes", "name": "Scent icons", "limit": 1, "settings": [
+      { "type": "paragraph", "content": "Connect labels to product metafields to change them per product." },
+      { "type": "select", "id": "icon_1", "label": "Icon 1", "default": "drop", "options": [ { "value": "drop", "label": "Drop" }, { "value": "daynight", "label": "Day + night" }, { "value": "summer", "label": "Summer" }, { "value": "winter", "label": "Winter" }, { "value": "night", "label": "Night" }, { "value": "intensity", "label": "Intensity" }, { "value": "flame", "label": "Warm" }, { "value": "leaf", "label": "Leaf" }, { "value": "heart", "label": "Heart" } ] },
+      { "type": "image_picker", "id": "image_1", "label": "Image 1 (replaces icon)" },
+      { "type": "text", "id": "label_1", "label": "Label 1", "default": "Fräsch" },
+      { "type": "select", "id": "icon_2", "label": "Icon 2", "default": "daynight", "options": [ { "value": "drop", "label": "Drop" }, { "value": "daynight", "label": "Day + night" }, { "value": "summer", "label": "Summer" }, { "value": "winter", "label": "Winter" }, { "value": "night", "label": "Night" }, { "value": "intensity", "label": "Intensity" }, { "value": "flame", "label": "Warm" }, { "value": "leaf", "label": "Leaf" }, { "value": "heart", "label": "Heart" } ] },
+      { "type": "image_picker", "id": "image_2", "label": "Image 2 (replaces icon)" },
+      { "type": "text", "id": "label_2", "label": "Label 2", "default": "Dagtid" },
+      { "type": "select", "id": "icon_3", "label": "Icon 3", "default": "summer", "options": [ { "value": "drop", "label": "Drop" }, { "value": "daynight", "label": "Day + night" }, { "value": "summer", "label": "Summer" }, { "value": "winter", "label": "Winter" }, { "value": "night", "label": "Night" }, { "value": "intensity", "label": "Intensity" }, { "value": "flame", "label": "Warm" }, { "value": "leaf", "label": "Leaf" }, { "value": "heart", "label": "Heart" } ] },
+      { "type": "image_picker", "id": "image_3", "label": "Image 3 (replaces icon)" },
+      { "type": "text", "id": "label_3", "label": "Label 3", "default": "Sommar" },
+      { "type": "select", "id": "icon_4", "label": "Icon 4", "default": "intensity", "options": [ { "value": "drop", "label": "Drop" }, { "value": "daynight", "label": "Day + night" }, { "value": "summer", "label": "Summer" }, { "value": "winter", "label": "Winter" }, { "value": "night", "label": "Night" }, { "value": "intensity", "label": "Intensity" }, { "value": "flame", "label": "Warm" }, { "value": "leaf", "label": "Leaf" }, { "value": "heart", "label": "Heart" } ] },
+      { "type": "image_picker", "id": "image_4", "label": "Image 4 (replaces icon)" },
+      { "type": "text", "id": "label_4", "label": "Label 4", "default": "Strong" } ] },
+    { "type": "membership", "name": "Membership checkbox", "limit": 1, "settings": [
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "text", "id": "title", "label": "Title", "default": "Upp till 30 % rabatt med Tryscent+" },
+      { "type": "text", "id": "tooltip", "label": "Info tooltip", "default": "Medlemskap som ger rabatt på varje köp och månatlig butikskredit." },
+      { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Köp mer, spara mer • Månatlig butikskredit • Tidig tillgång till släpp" },
+      { "type": "select", "id": "mode", "label": "When ticked", "default": "product", "options": [
+        { "value": "product", "label": "Also add membership product" },
+        { "value": "selling_plan", "label": "Use product's subscription" },
+        { "value": "visual", "label": "Nothing (visual only)" } ] },
+      { "type": "product", "id": "member_product", "label": "Membership product" },
+      { "type": "checkbox", "id": "checked", "label": "Ticked by default", "default": false } ] },
+    { "type": "variant_picker", "name": "Size picker", "limit": 1, "settings": [
+      { "type": "text", "id": "heading", "label": "Heading", "default": "Välj storlek:" },
+      { "type": "text", "id": "hint", "label": "Hint text", "default": "100 ml - vald av 8 av 10 kunder" },
+      { "type": "checkbox", "id": "show_unit_price", "label": "Show price per ml", "default": true },
+      { "type": "text", "id": "badge_1_value", "label": "Badge 1 on size", "default": "50ml" },
+      { "type": "text", "id": "badge_1_text", "label": "Badge 1 text", "default": "Mest Populär" },
+      { "type": "color", "id": "badge_1_color", "label": "Badge 1 color", "default": "#dc2626" },
+      { "type": "text", "id": "badge_2_value", "label": "Badge 2 on size", "default": "100ml" },
+      { "type": "text", "id": "badge_2_text", "label": "Badge 2 text", "default": "Bäst värde" },
+      { "type": "color", "id": "badge_2_color", "label": "Badge 2 color", "default": "#22613a" } ] },
+    { "type": "buy_buttons", "name": "Add to cart button", "limit": 1, "settings": [
+      { "type": "text", "id": "button_text", "label": "Button text", "default": "Lägg i kundvagnen" },
+      { "type": "text", "id": "sold_out_text", "label": "Sold out text", "default": "Slutsåld" },
+      { "type": "checkbox", "id": "show_price", "label": "Show price inside the button", "default": true },
+      { "type": "color", "id": "button_color", "label": "Button color", "default": "#22613a" },
+      { "type": "color", "id": "button_text_color", "label": "Button text color", "default": "#f3f3f3" },
+      { "type": "checkbox", "id": "shine", "label": "Shine animation", "default": true },
+      { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show express checkout button", "default": false } ] },
+    { "type": "payment_icons", "name": "Payment icons", "limit": 1, "settings": [] },
+    { "type": "text", "name": "Text", "settings": [
+      { "type": "inline_richtext", "id": "text", "label": "Text", "default": "Levereras till Sverige inom 5 arbetsdagar." },
+      { "type": "select", "id": "align", "label": "Alignment", "default": "center", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" } ] },
+      { "type": "range", "id": "size", "label": "Font size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 16 } ] },
+    { "type": "promo_card", "name": "Random product card", "settings": [
+      { "type": "text", "id": "badge", "label": "Badge", "info": "[percent] = saving from compare-at price.", "default": "Spara [percent]%" },
+      { "type": "color", "id": "badge_color", "label": "Badge background", "default": "#dcfce7" },
+      { "type": "color", "id": "badge_text_color", "label": "Badge text", "default": "#15803d" },
+      { "type": "color", "id": "border_color", "label": "Card border", "default": "#cc303d" },
+      { "type": "text", "id": "title", "label": "Title", "info": "Empty = product title." },
+      { "type": "richtext", "id": "text", "label": "Text", "info": "[price] = product price.", "default": "<p>Endast <strong>[price]</strong></p>" } ] },
+    { "type": "guarantee", "name": "Guarantee", "limit": 1, "settings": [
+      { "type": "image_picker", "id": "image", "label": "Badge image", "info": "Empty = built-in thumbs-up." },
+      { "type": "text", "id": "title", "label": "Title", "default": "Prova i 60 dagar, riskfritt." },
+      { "type": "text", "id": "text", "label": "Text", "default": "Inte nöjd med doften? Du får pengarna tillbaka." } ] },
+    { "type": "notes_accordion", "name": "Scent notes accordion", "limit": 1, "settings": [
+      { "type": "text", "id": "title", "label": "Title", "default": "Så Doftar Den" },
+      { "type": "select", "id": "icon", "label": "Icon", "default": "clipboard", "options": [ { "value": "clipboard", "label": "List" }, { "value": "bottle", "label": "Bottle" }, { "value": "leaf", "label": "Leaf" } ] },
+      { "type": "checkbox", "id": "open", "label": "Open by default", "default": false },
+      { "type": "header", "content": "Main notes" },
+      { "type": "text", "id": "main_label", "label": "Label", "default": "Huvudnoter:" },
+      { "type": "image_picker", "id": "note_image_1", "label": "Note 1 image" }, { "type": "text", "id": "note_name_1", "label": "Note 1", "default": "Bergamott" },
+      { "type": "image_picker", "id": "note_image_2", "label": "Note 2 image" }, { "type": "text", "id": "note_name_2", "label": "Note 2", "default": "Fikonlöv" },
+      { "type": "image_picker", "id": "note_image_3", "label": "Note 3 image" }, { "type": "text", "id": "note_name_3", "label": "Note 3", "default": "Grapefrukt" },
+      { "type": "image_picker", "id": "note_image_4", "label": "Note 4 image" }, { "type": "text", "id": "note_name_4", "label": "Note 4" },
+      { "type": "image_picker", "id": "note_image_5", "label": "Note 5 image" }, { "type": "text", "id": "note_name_5", "label": "Note 5" },
+      { "type": "image_picker", "id": "note_image_6", "label": "Note 6 image" }, { "type": "text", "id": "note_name_6", "label": "Note 6" },
+      { "type": "header", "content": "Top / heart / base notes" },
+      { "type": "text", "id": "top_label", "label": "Top label", "default": "Toppnoter:" },
+      { "type": "text", "id": "top_notes", "label": "Top notes", "default": "Bergamott, grapefrukt, fikonlöv" },
+      { "type": "text", "id": "top_desc", "label": "Top description", "default": "Frisk och livfull med gröna nyanser." },
+      { "type": "text", "id": "heart_label", "label": "Heart label", "default": "Mellannoter:" },
+      { "type": "text", "id": "heart_notes", "label": "Heart notes", "default": "Svartpeppar, patchouli, violblad" },
+      { "type": "text", "id": "heart_desc", "label": "Heart description", "default": "Aromatisk och kryddig med modernt djup." },
+      { "type": "text", "id": "base_label", "label": "Base label", "default": "Basnoter:" },
+      { "type": "text", "id": "base_notes", "label": "Base notes", "default": "Mysk, tonkaböna, rökelse" },
+      { "type": "text", "id": "base_desc", "label": "Base description", "default": "Mild och sensuell med en varm finish." },
+      { "type": "header", "content": "Ingredients + tags" },
+      { "type": "text", "id": "ingredients_label", "label": "Ingredients label", "default": "Ingredienser:" },
+      { "type": "textarea", "id": "ingredients", "label": "Ingredients", "default": "Denaturerad alkohol, parfym (doft), vatten, limonen, linalool, citronellol, geraniol, citral, kumarin." },
+      { "type": "text", "id": "tag_1", "label": "Tag 1", "default": "Vegansk" },
+      { "type": "text", "id": "tag_2", "label": "Tag 2", "default": "Djurförsöksfri" },
+      { "type": "text", "id": "tag_3", "label": "Tag 3", "default": "Rena ingredienser" } ] },
+    { "type": "faq_item", "name": "FAQ question", "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "default": "globe", "options": [
+        { "value": "globe", "label": "Globe" }, { "value": "info", "label": "Info" }, { "value": "star", "label": "Star" }, { "value": "truck", "label": "Truck" }, { "value": "shield", "label": "Shield" } ] },
+      { "type": "text", "id": "question", "label": "Question", "default": "Fråga" },
+      { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Svar</p>" },
+      { "type": "checkbox", "id": "open", "label": "Open by default", "default": false } ] },
+    { "type": "custom_liquid", "name": "Custom Liquid", "settings": [
+      { "type": "liquid", "id": "custom_liquid", "label": "Custom Liquid" } ] }
+  ],
+  "presets": [{
+    "name": "TryScent Product Page",
+    "blocks": [
+      { "type": "gallery_feature", "settings": { "icon": "bottle", "text": "Samma doft bättre pris" } },
+      { "type": "gallery_feature", "settings": { "icon": "stars", "text": "10 000+ nöjda köpare" } },
+      { "type": "gallery_feature", "settings": { "icon": "shield", "text": "60 dagars pengarna-tillbaka-garanti" } },
+      { "type": "eyebrow" }, { "type": "title" }, { "type": "rating" }, { "type": "inspired_by" }, { "type": "highlight" },
+      { "type": "description" }, { "type": "scent_attributes" }, { "type": "membership" }, { "type": "variant_picker" },
+      { "type": "buy_buttons" }, { "type": "payment_icons" }, { "type": "text" }, { "type": "promo_card" }, { "type": "guarantee" },
+      { "type": "notes_accordion" },
+      { "type": "faq_item", "settings": { "question": "Är det parfymerat vatten?", "answer": "<p>Nej. Våra dofter är Eau de Parfum med hög parfymoljekoncentration som sitter kvar på huden i många timmar.</p>" } },
+      { "type": "faq_item", "settings": { "question": "Vad betyder 19-21% parfym?", "answer": "<p>Procenten anger koncentrationen av doftoljor. 19–21 % klassas som Eau de Parfum (EDP) – lång hållbarhet och stark projektion.</p>" } },
+      { "type": "faq_item", "settings": { "icon": "star", "question": "ANSVARSFRISKRIVNING FÖR JÄMFÖRANDE REKLAM", "answer": "<p>Varumärken som nämns används endast för att beskriva doftprofilen och tillhör sina respektive ägare. Vi har ingen koppling till dem.</p>" } }
+    ]
+  }]
+}
+{% endschema %}

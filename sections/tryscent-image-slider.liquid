@@ -1,0 +1,412 @@
+{% liquid
+  assign section_id = 'ts-img-slider-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="ts-img-slider-section"
+  style="
+    --ts-bg: {{ section.settings.background_color }};
+    --ts-top: {{ section.settings.padding_top }}px;
+    --ts-bottom: {{ section.settings.padding_bottom }}px;
+    --ts-img-size: {{ section.settings.image_size }}px;
+    --ts-img-radius: {{ section.settings.image_radius }}px;
+    --ts-gap: {{ section.settings.image_gap }}px;
+    --ts-speed: {{ section.settings.scroll_speed }}s;
+  "
+>
+  {% if section.settings.heading != blank or section.settings.subheading != blank %}
+    <div class="ts-img-slider-header">
+      {% if section.settings.subheading != blank %}
+        <span class="ts-img-slider-eyebrow">{{ section.settings.subheading | escape }}</span>
+      {% endif %}
+      {% if section.settings.heading != blank %}
+        <h2 class="ts-img-slider-title">{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="ts-img-slider-wrapper">
+    
+    <!-- ROW 1 (TOP MARQUEE) -->
+    <div class="ts-marquee-track ts-marquee-row-1 {% if section.settings.pause_on_hover %}pause-on-hover{% endif %}">
+      <div class="ts-marquee-content">
+        {% for block in section.blocks %}
+          {% if block.type == 'row1_image' %}
+            <div class="ts-marquee-item" {{ block.shopify_attributes }}>
+              {% if block.settings.image != blank %}
+                {{
+                  block.settings.image
+                  | image_url: width: 600
+                  | image_tag: loading: 'lazy', class: 'ts-marquee-img', alt: 'Customer review top'
+                }}
+              {% else %}
+                <div class="ts-marquee-placeholder">
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <!-- Duplicate set for infinite loop -->
+      <div class="ts-marquee-content" aria-hidden="true">
+        {% for block in section.blocks %}
+          {% if block.type == 'row1_image' %}
+            <div class="ts-marquee-item">
+              {% if block.settings.image != blank %}
+                {{
+                  block.settings.image
+                  | image_url: width: 600
+                  | image_tag: loading: 'lazy', class: 'ts-marquee-img', alt: 'Customer review top'
+                }}
+              {% else %}
+                <div class="ts-marquee-placeholder">
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- ROW 2 (BOTTOM MARQUEE - COMPLETELY SEPARATE IMAGES) -->
+    {% if section.settings.enable_row_2 %}
+      <div class="ts-marquee-track ts-marquee-row-2 {% if section.settings.reverse_row_2 %}reverse-scroll{% endif %} {% if section.settings.pause_on_hover %}pause-on-hover{% endif %}">
+        <div class="ts-marquee-content">
+          {% for block in section.blocks %}
+            {% if block.type == 'row2_image' %}
+              <div class="ts-marquee-item" {{ block.shopify_attributes }}>
+                {% if block.settings.image != blank %}
+                  {{
+                    block.settings.image
+                    | image_url: width: 600
+                    | image_tag: loading: 'lazy', class: 'ts-marquee-img', alt: 'Customer review bottom'
+                  }}
+                {% else %}
+                  <div class="ts-marquee-placeholder">
+                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <!-- Duplicate set for infinite loop -->
+        <div class="ts-marquee-content" aria-hidden="true">
+          {% for block in section.blocks %}
+            {% if block.type == 'row2_image' %}
+              <div class="ts-marquee-item">
+                {% if block.settings.image != blank %}
+                  {{
+                    block.settings.image
+                    | image_url: width: 600
+                    | image_tag: loading: 'lazy', class: 'ts-marquee-img', alt: 'Customer review bottom'
+                  }}
+                {% else %}
+                  <div class="ts-marquee-placeholder">
+                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    padding: var(--ts-top) 0 var(--ts-bottom);
+    background-color: var(--ts-bg);
+    overflow: hidden;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  /* Header */
+  #{{ section_id }} .ts-img-slider-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 32px;
+    padding: 0 20px;
+  }
+
+  #{{ section_id }} .ts-img-slider-eyebrow {
+    color: #107a42;
+    font-size: 14px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  #{{ section_id }} .ts-img-slider-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #121212;
+    margin: 0;
+  }
+
+  /* Marquee Track Container */
+  #{{ section_id }} .ts-img-slider-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    width: 100%;
+  }
+
+  #{{ section_id }} .ts-marquee-track {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    width: 100%;
+  }
+
+  #{{ section_id }} .ts-marquee-content {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-shrink: 0;
+    min-width: 100%;
+    animation: ts-scroll-left var(--ts-speed) linear infinite;
+    padding-right: var(--ts-gap);
+  }
+
+  /* Reverse direction animation */
+  #{{ section_id }} .ts-marquee-track.reverse-scroll .ts-marquee-content {
+    animation: ts-scroll-right var(--ts-speed) linear infinite;
+  }
+
+  /* Pause on hover */
+  #{{ section_id }} .ts-marquee-track.pause-on-hover:hover .ts-marquee-content {
+    animation-play-state: paused;
+  }
+
+  /* Image Items */
+  #{{ section_id }} .ts-marquee-item {
+    width: var(--ts-img-size);
+    height: var(--ts-img-size);
+    flex-shrink: 0;
+    overflow: hidden;
+    background: #f3f4f6;
+  }
+
+  #{{ section_id }} .ts-marquee-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #{{ section_id }} .ts-marquee-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e7eb;
+  }
+
+  #{{ section_id }} .ts-marquee-placeholder svg {
+    width: 50%;
+    height: 50%;
+  }
+
+  /* Keyframe Animations */
+  @keyframes ts-scroll-left {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes ts-scroll-right {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0%);
+    }
+  }
+
+  /* Responsive Adjustments */
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} {
+      --ts-img-size: calc(var(--ts-img-size) * 0.8);
+    }
+
+    #{{ section_id }} .ts-img-slider-title {
+      font-size: 22px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "TryScent Image Marquee",
+  "tag": "section",
+  "class": "section-tryscent-image-marquee",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading / Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "header",
+      "content": "Slider Configuration"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_row_2",
+      "label": "Enable Second Row",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "reverse_row_2",
+      "label": "Reverse Direction for Row 2",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause Animation on Hover",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll Duration (Seconds)",
+      "min": 10,
+      "max": 80,
+      "step": 2,
+      "unit": "s",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Image Styling"
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "label": "Square Image Size",
+      "min": 120,
+      "max": 320,
+      "step": 10,
+      "unit": "px",
+      "default": 180
+    },
+    {
+      "type": "range",
+      "id": "image_gap",
+      "label": "Gap Between Images",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image Border Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing & Background"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row1_image",
+      "name": "Row 1 Image (Top)",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Top Row Image"
+        }
+      ]
+    },
+    {
+      "type": "row2_image",
+      "name": "Row 2 Image (Bottom)",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Bottom Row Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent Image Marquee",
+      "blocks": [
+        { "type": "row1_image" },
+        { "type": "row1_image" },
+        { "type": "row1_image" },
+        { "type": "row1_image" },
+        { "type": "row2_image" },
+        { "type": "row2_image" },
+        { "type": "row2_image" },
+        { "type": "row2_image" }
+      ]
+    }
+  ]
+}
+{% endschema %}

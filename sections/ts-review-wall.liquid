@@ -1,0 +1,624 @@
+{% liquid
+  assign section_id = 'ts-wall-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="ts-review-wall"
+  style="
+    --ts-bg: {{ section.settings.background_color }};
+    --ts-top: {{ section.settings.padding_top }}px;
+    --ts-bottom: {{ section.settings.padding_bottom }}px;
+    --ts-max: {{ section.settings.content_width }}px;
+    --ts-gap: {{ section.settings.card_gap }}px;
+    --ts-radius: {{ section.settings.card_radius }}px;
+    --ts-card-bg: {{ section.settings.card_background }};
+    --ts-border: {{ section.settings.border_color }};
+  "
+>
+  <div class="ts-review-wall__inner">
+    <!-- Header Section -->
+    <div class="ts-review-wall__header">
+      {% if section.settings.heading != blank %}
+        <h2 class="ts-review-wall__title">{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+
+      {% if section.settings.show_rating_badge %}
+        <div class="ts-review-wall__rating-badge">
+          <div class="ts-stars">
+            {% for i in (1..5) %}
+              <span class="ts-star">★</span>
+            {% endfor %}
+          </div>
+          <span class="ts-rating-text">{{ section.settings.rating_text | escape }}</span>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Masonry Wall Container -->
+    <div class="ts-review-wall__grid" data-ts-wall-grid>
+      {% for block in section.blocks %}
+        {% assign is_text_first = block.settings.layout_text_first %}
+        <article
+          class="ts-wall-card {% if forloop.index > section.settings.initial_items %}ts-wall-card--hidden{% endif %} {% if is_text_first %}ts-wall-card--text-first{% endif %}"
+          {{ block.shopify_attributes }}
+        >
+          {% capture card_content %}
+            <div class="ts-wall-card__content">
+              <div class="ts-wall-card__header">
+                <div class="ts-wall-card__author-group">
+                  <span class="ts-wall-card__author">{{ block.settings.author_name | escape }}</span>
+                  {% if block.settings.is_verified %}
+                    <span class="ts-wall-card__verified">
+                      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <circle cx="8" cy="8" r="7" fill="#2563EB"/>
+                        <path d="M5 8L7 10L11 6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      Verifierad köpare
+                    </span>
+                  {% endif %}
+                </div>
+
+                <div class="ts-wall-card__meta">
+                  <div class="ts-wall-card__stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+                    {% for i in (1..5) %}
+                      <span class="ts-wall-star {% if i > block.settings.rating %}ts-wall-star--muted{% endif %}">★</span>
+                    {% endfor %}
+                  </div>
+                  {% if block.settings.date_text != blank %}
+                    <span class="ts-wall-card__date">{{ block.settings.date_text | escape }}</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              {% if block.settings.review_text != blank %}
+                <p class="ts-wall-card__text">"{{ block.settings.review_text | escape }}"</p>
+              {% endif %}
+
+              {% if block.settings.product_title != blank %}
+                <div class="ts-wall-card__product">
+                  {% if block.settings.product_image != blank %}
+                    {{
+                      block.settings.product_image
+                      | image_url: width: 100
+                      | image_tag: loading: 'lazy', class: 'ts-wall-card__product-img', alt: ''
+                    }}
+                  {% endif %}
+                  <div class="ts-wall-card__product-info">
+                    <span class="ts-wall-card__product-name">{{ block.settings.product_title | escape }}</span>
+                    {% if block.settings.product_subtitle != blank %}
+                      <span class="ts-wall-card__product-sub">{{ block.settings.product_subtitle | escape }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          {% endcapture %}
+
+          {% capture card_media %}
+            {% if block.settings.image != blank %}
+              <div class="ts-wall-card__media">
+                {{
+                  block.settings.image
+                  | image_url: width: 800
+                  | image_tag:
+                    loading: 'lazy',
+                    class: 'ts-wall-card__img',
+                    alt: block.settings.author_name | default: 'Customer review photo'
+                }}
+              </div>
+            {% endif %}
+          {% endcapture %}
+
+          {% if is_text_first %}
+            {{ card_content }}
+            {{ card_media }}
+          {% else %}
+            {{ card_media }}
+            {{ card_content }}
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+
+    <!-- Load More Button -->
+    {% if section.blocks.size > section.settings.initial_items %}
+      <div class="ts-review-wall__actions">
+        <button type="button" class="ts-wall-btn" data-ts-load-more>
+          {{ section.settings.load_more_label | escape }}
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    background: var(--ts-bg);
+    padding: var(--ts-top) 24px var(--ts-bottom);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-review-wall__inner {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+  }
+
+  /* Header Bar */
+  #{{ section_id }} .ts-review-wall__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  #{{ section_id }} .ts-review-wall__title {
+    color: #121212;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  #{{ section_id }} .ts-review-wall__rating-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #{{ section_id }} .ts-stars {
+    color: #FFB800;
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  #{{ section_id }} .ts-rating-text {
+    font-size: 14px;
+    color: #475569;
+    font-weight: 600;
+    line-height: 1.62;
+  }
+
+  /* Masonry Column Layout */
+  #{{ section_id }} .ts-review-wall__grid {
+    column-count: 3;
+    column-gap: var(--ts-gap);
+    width: 100%;
+  }
+
+  #{{ section_id }} .ts-wall-card {
+    break-inside: avoid;
+    margin-bottom: var(--ts-gap);
+    background: var(--ts-card-bg);
+    border: 1px solid var(--ts-border);
+    border-radius: var(--ts-radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+
+  #{{ section_id }} .ts-wall-card--hidden {
+    display: none !important;
+  }
+
+  #{{ section_id }} .ts-wall-card__media {
+    width: 100%;
+    background: #F8FAFC;
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .ts-wall-card__img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  #{{ section_id }} .ts-wall-card__content {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Author Header */
+  #{{ section_id }} .ts-wall-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  #{{ section_id }} .ts-wall-card__author-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  #{{ section_id }} .ts-wall-card__author {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    letter-spacing: 0.6px;
+    color: #0f172a;
+  }
+
+  #{{ section_id }} .ts-wall-card__verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    line-height: 16px;
+    color: #297af4;
+    font-weight: 400;
+  }
+
+  #{{ section_id }} .ts-wall-card__verified svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  #{{ section_id }} .ts-wall-card__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+  }
+
+  #{{ section_id }} .ts-wall-card__stars {
+    color: #FFB800;
+    font-size: 14px;
+    display: flex;
+    gap: 1px;
+  }
+
+  #{{ section_id }} .ts-wall-star--muted {
+    color: #9ca3af;
+  }
+
+  #{{ section_id }} .ts-wall-card__date {
+    font-size: 10px;
+    color: #9ca3af;
+  }
+
+  /* Review Text */
+  #{{ section_id }} .ts-wall-card__text {
+    font-size: 14px;
+    line-height: 1.62;
+    color: #475569;
+    margin: 0;
+  }
+
+  /* Product Tag Footer */
+  #{{ section_id }} .ts-wall-card__product {
+    margin-top: 2px;
+    padding-top: 8px;
+    border-top: 1px solid #F1F5F9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #{{ section_id }} .ts-wall-card__product-img {
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #F8FAFC;
+    flex: 0 0 28px;
+  }
+
+  #{{ section_id }} .ts-wall-card__product-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #{{ section_id }} .ts-wall-card__product-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  #{{ section_id }} .ts-wall-card__product-sub {
+    font-size: 12px;
+    line-height: 16px;
+    color: #000000;
+  }
+
+  /* Button Action */
+  #{{ section_id }} .ts-review-wall__actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 36px;
+  }
+
+  #{{ section_id }} .ts-wall-btn {
+    background: #FFFFFF;
+    color: #111827;
+    border: 1px solid #111827;
+    border-radius: 4px;
+    padding: 10px 28px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  #{{ section_id }} .ts-wall-btn:hover {
+    background: #111827;
+    color: #FFFFFF;
+  }
+
+  @media screen and (max-width: 900px) {
+    #{{ section_id }} .ts-review-wall__grid {
+      column-count: 2;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    #{{ section_id }} {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    #{{ section_id }} .ts-review-wall__grid {
+      column-count: 1;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById({{ section_id | json }});
+    if (!root) return;
+
+    const btn = root.querySelector('[data-ts-load-more]');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const hiddenCards = root.querySelectorAll('.ts-wall-card--hidden');
+        hiddenCards.forEach(card => card.classList.remove('ts-wall-card--hidden'));
+        btn.style.display = 'none';
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "TryScent Review Wall",
+  "tag": "section",
+  "class": "section-tryscent-review-wall",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header Settings"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Gå med 10 000+ nöjda kunder"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating_badge",
+      "label": "Show Rating Badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Rating Text",
+      "default": "4,9/5 baserat på 10 000+ recensioner"
+    },
+    {
+      "type": "header",
+      "content": "Display Settings"
+    },
+    {
+      "type": "range",
+      "id": "initial_items",
+      "label": "Initially Visible Cards",
+      "min": 3,
+      "max": 30,
+      "step": 3,
+      "default": 12
+    },
+    {
+      "type": "text",
+      "id": "load_more_label",
+      "label": "Load More Button Text",
+      "default": "VISA FLER RECENSIONER"
+    },
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Grid Gap",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card Corner Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Card Border Color",
+      "default": "#E2E8F0"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review_card",
+      "name": "Photo Review Card",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "layout_text_first",
+          "label": "Show Text Above Photo",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Customer Photo"
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Author Name",
+          "default": "Jamillah G."
+        },
+        {
+          "type": "checkbox",
+          "id": "is_verified",
+          "label": "Verified Buyer",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "date_text",
+          "label": "Relative Date",
+          "default": "för 4 månader sedan"
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review Quote",
+          "default": "Omg jag älskade den, wow! Precis som originalet och den håller hela dagen! ❤️🔥"
+        },
+        {
+          "type": "header",
+          "content": "Tagged Product (Optional)"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "Product Thumbnail"
+        },
+        {
+          "type": "text",
+          "id": "product_title",
+          "label": "Product Name",
+          "default": "3X 50ml Parfymflaskor"
+        },
+        {
+          "type": "text",
+          "id": "product_subtitle",
+          "label": "Inspiration Subtitle",
+          "default": "Inspirerad av"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent Review Wall",
+      "blocks": [
+        {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "author_name": "Jamillah G.",
+            "date_text": "för 4 månader sedan",
+            "review_text": "Omg jag älskade den, wow! Precis som originalet och den håller hela dagen! ❤️🔥"
+          }
+        },
+        {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": true,
+            "author_name": "Alina M.",
+            "date_text": "för 5 månader sedan",
+            "review_text": "Jag är nöjd med TryScent. Doften luktar väldigt likt originalet och håller bra. Förpackningen är snygg och flaskan ser fin ut."
+          }
+        },
+        {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "author_name": "Rosa B.",
+            "date_text": "för 7 månader sedan",
+            "review_text": "Väldigt bra varumärke, jag älskar förpackningen och doften."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

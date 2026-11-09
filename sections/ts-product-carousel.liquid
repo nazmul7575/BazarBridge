@@ -1,0 +1,814 @@
+{% liquid
+  assign section_id = 'ts-products-' | append: section.id
+  assign selected_collection = collections[section.settings.collection]
+%}
+
+
+<section
+  id="{{ section_id }}"
+  class="ts-products-section"
+  style="
+    --ts-bg: {{ section.settings.bg_color }};
+    --ts-card-bg: {{ section.settings.card_bg_color }};
+    --ts-text: {{ section.settings.text_color }};
+    --ts-muted: {{ section.settings.muted_color }};
+    --ts-border: {{ section.settings.border_color }};
+    --ts-badge-bg: {{ section.settings.badge_bg_color }};
+    --ts-btn-bg: {{ section.settings.btn_bg_color }};
+    --ts-btn-hover: {{ section.settings.btn_hover_color }};
+    --ts-btn-text: {{ section.settings.btn_text_color }};
+    --ts-max: {{ section.settings.max_width }}px;
+    --ts-pt: {{ section.settings.padding_top }}px;
+    --ts-pb: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="ts-products__inner">
+    <!-- Header -->
+    <div class="ts-products__header">
+      <h2 class="ts-products__title">
+        {% if section.settings.emoji != blank %}
+          <span class="ts-products__emoji">{{ section.settings.emoji }}</span>
+        {% endif %}
+        {{ section.settings.heading | escape }}
+      </h2>
+
+      {% if section.settings.show_arrows %}
+        <div class="ts-products__arrows">
+          <button type="button" class="ts-arrow ts-arrow--prev" data-ts-prev aria-label="Föregående">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+          </button>
+          <button type="button" class="ts-arrow ts-arrow--next" data-ts-next aria-label="Nästa">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Carousel / Track -->
+    <div class="ts-products__carousel" data-ts-carousel>
+      <div class="ts-products__viewport" data-ts-viewport>
+        <div class="ts-products__track" data-ts-track>
+          {% if selected_collection != blank and selected_collection.products.size > 0 %}
+            {% for product in selected_collection.products limit: section.settings.products_to_show %}
+              <div class="ts-product-card" data-ts-slide>
+                
+                <!-- Full Card Clickable Link Overlay -->
+                <a href="{{ product.url }}" class="ts-product-card__full-link" aria-label="{{ product.title | escape }}"></a>
+
+                <!-- Single Product Badge Logic -->
+                {% assign has_badge = false %}
+                {% assign badge_label = '' %}
+
+                {% assign metafield_badge = product.metafields.custom.badge.value | default: product.metafields.custom.badge %}
+
+                {% if metafield_badge != blank %}
+                  {% assign has_badge = true %}
+                  {% assign badge_label = metafield_badge %}
+                {% else %}
+                  {% for tag in product.tags %}
+                    {% assign downcase_tag = tag | downcase %}
+                    {% if downcase_tag contains 'bästsäljare' or downcase_tag contains 'bestseller' %}
+                      {% assign has_badge = true %}
+                      {% assign badge_label = tag %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                {% if has_badge %}
+                  <div class="ts-product-card__badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>{{ badge_label }}</span>
+                  </div>
+                {% endif %}
+
+                <!-- Main Image Link -->
+                <a href="{{ product.url }}" class="ts-product-card__image-wrapper">
+                  {% if product.featured_media %}
+                    <img
+                      src="{{ product.featured_media | image_url: width: 600 }}"
+                      alt="{{ product.featured_media.alt | escape }}"
+                      loading="lazy"
+                      width="{{ product.featured_media.width }}"
+                      height="{{ product.featured_media.height }}"
+                      class="ts-product-card__image"
+                    >
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag: 'ts-product-card__image' }}
+                  {% endif %}
+                </a>
+
+                <!-- Details Block -->
+                <div class="ts-product-card__content">
+                  <h3 class="ts-product-card__title">
+                    <a href="{{ product.url }}">{{ product.title }}</a>
+                  </h3>
+
+                  <!-- Inspiration Metaobject Section -->
+                  {%- assign inspiration_obj = product.metafields.custom.inspiration.value -%}
+                  
+                  {% if inspiration_obj != blank %}
+                    {%- liquid
+                      assign inspired_name = inspiration_obj.name | default: inspiration_obj.title | default: inspiration_obj.label
+                      assign inspired_img_object = inspiration_obj.image | default: inspiration_obj.photo | default: inspiration_obj.bottle_image
+                    -%}
+
+                    <div class="ts-product-card__inspired">
+                      <div class="ts-inspired__thumb-wrapper">
+                        {% if inspired_img_object != blank %}
+                          {% assign inspired_img_url = inspired_img_object | image_url: width: 80 %}
+                          {% if inspired_img_url != blank %}
+                            <img
+                              src="{{ inspired_img_url }}"
+                              alt="{{ inspired_name | escape }}"
+                              loading="lazy"
+                              class="ts-inspired__thumb"
+                            >
+                          {% endif %}
+                        {% endif %}
+                      </div>
+                      <div class="ts-inspired__text">
+                        <span class="ts-inspired__label">Inspirerad av:</span>
+                        <span class="ts-inspired__name">{{ inspired_name }}</span>
+                      </div>
+                    </div>
+                  {% endif %}
+
+                  <!-- Bottom Group (Price + Button Link) -->
+                  <div class="ts-product-card__footer">
+                    <div class="ts-product-card__price">
+                      <span class="ts-price--current">{{ product.price | money }}</span>
+                      {% if product.compare_at_price > product.price %}
+                        <span class="ts-price--compare">{{ product.compare_at_price | money }}</span>
+                      {% endif %}
+                    </div>
+
+                    <a href="{{ product.url }}" class="ts-product-card__btn">
+                      {{ section.settings.btn_text | escape }}
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Promo Marquee Banner (Displays when product compare price is higher, or customize condition) -->
+                {% if product.compare_at_price > product.price %}
+                  <div class="card__promo-marquee absolute left-0 right-0 bottom-0 bg-[#137c44] text-white overflow-hidden py-1.5" aria-label="30% RABATT">
+                    <div class="card__promo-marquee-rail flex whitespace-nowrap animate-marquee">
+                      <div class="card__promo-marquee-group flex items-center shrink-0">
+                        <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                        <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                        <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                        <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                        <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                        <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                      </div>
+                      <div class="card__promo-marquee-group flex items-center shrink-0" aria-hidden="true">
+                        <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                        <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                        <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                        <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                        <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                        <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+
+              </div>
+            {% endfor %}
+          {% else %}
+            <!-- Placeholders -->
+            {% for i in (1..4) %}
+              <div class="ts-product-card" data-ts-slide>
+                <a href="#" class="ts-product-card__full-link"></a>
+                {% if i == 2 %}
+                  <div class="ts-product-card__badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>Bästsäljare</span>
+                  </div>
+                {% endif %}
+                <a href="#" class="ts-product-card__image-wrapper">
+                  {{ 'product-1' | placeholder_svg_tag: 'ts-product-card__image' }}
+                </a>
+                <div class="ts-product-card__content">
+                  <h3 class="ts-product-card__title">
+                    <a href="#">Doftar som... Sample Product - No. {{ i }}00</a>
+                  </h3>
+                  <div class="ts-product-card__footer">
+                    <div class="ts-product-card__price">
+                      <span class="ts-price--current">169,99 kr</span>
+                    </div>
+                    <a href="#" class="ts-product-card__btn">{{ section.settings.btn_text | escape }}</a>
+                  </div>
+                </div>
+
+                {% if i == 1 or i == 3 %}
+                  <div class="card__promo-marquee absolute left-0 right-0 bottom-0 bg-[#137c44] text-white overflow-hidden py-1.5" aria-label="30% RABATT">
+                    <div class="card__promo-marquee-rail flex whitespace-nowrap animate-marquee">
+                      <div class="card__promo-marquee-group flex items-center shrink-0">
+                        <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                        <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                        <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                        <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                      </div>
+                      <div class="card__promo-marquee-group flex items-center shrink-0" aria-hidden="true">
+                        <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                        <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                        <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                        <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- View All Link -->
+    {% if section.settings.show_view_all %}
+      <div class="ts-products__footer">
+        <a href="{{ selected_collection.url | default: '/collections/all' }}" class="ts-products__view-all">
+          {{ section.settings.view_all_label | escape }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    background-color: var(--ts-bg);
+    color: var(--ts-text);
+    padding-top: var(--ts-pt);
+    padding-bottom: var(--ts-pb);
+    font-family: inherit;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-products__inner {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Header */
+  #{{ section_id }} .ts-products__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  #{{ section_id }} .ts-products__title {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ts-text);
+    letter-spacing: -0.01em;
+  }
+
+  #{{ section_id }} .ts-products__arrows {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* Navigation Arrows - 36px */
+  #{{ section_id }} .ts-arrow {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    border-radius: 50%;
+    border: 1px solid var(--ts-border);
+    background: #ffffff;
+    color: var(--ts-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+  }
+
+  #{{ section_id }} .ts-arrow:not(:disabled):hover {
+    background-color: #000000;
+    color: #ffffff;
+    border-color: #000000;
+  }
+
+  #{{ section_id }} .ts-arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  #{{ section_id }} .ts-arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Carousel Track */
+  #{{ section_id }} .ts-products__viewport {
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .ts-products__track {
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+  }
+
+  /* Product Card */
+  #{{ section_id }} .ts-product-card {
+    flex: 0 0 calc((100% - 48px) / 4);
+    min-width: 0;
+    background: var(--ts-card-bg);
+    border: 1px solid var(--ts-border);
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  /* Full Card Link Overlay (Background Layer) */
+  #{{ section_id }} .ts-product-card__full-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  /* Badge Absolute Placement & Styling */
+  #{{ section_id }} .ts-product-card__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 3;
+    background-color: #146b32;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 20px;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 5px;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    pointer-events: none;
+  }
+
+  #{{ section_id }} .ts-product-card__badge svg {
+    width: 14px;
+    height: 14px;
+    fill: #ffffff;
+    flex-shrink: 0;
+  }
+
+  /* Image Box Link (Top Layer) */
+  #{{ section_id }} .ts-product-card__image-wrapper {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    margin-bottom: 16px;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: #ffffff;
+    position: relative;
+    z-index: 2;
+  }
+
+  #{{ section_id }} .ts-product-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Content */
+  #{{ section_id }} .ts-product-card__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Product Title Link */
+  #{{ section_id }} .ts-product-card__title {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+    margin: 0 0 12px;
+    overflow: hidden;
+    min-height: 40px;
+  }
+
+  #{{ section_id }} .ts-product-card__title a {
+    color: var(--ts-text);
+    text-decoration: none;
+  }
+
+  /* Title style changes ONLY when hovering directly over the title link */
+  #{{ section_id }} .ts-product-card__title a:hover {
+    text-decoration: underline;
+  }
+
+  /* Inspired By */
+  #{{ section_id }} .ts-product-card__inspired {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    min-height: 28px;
+  }
+
+  #{{ section_id }} .ts-inspired__thumb-wrapper {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #{{ section_id }} .ts-inspired__thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #{{ section_id }} .ts-inspired__text {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  #{{ section_id }} .ts-inspired__label {
+    color: #000000;
+  }
+
+  #{{ section_id }} .ts-inspired__name {
+    color: #000000;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  /* Bottom Footer Group */
+  #{{ section_id }} .ts-product-card__footer {
+    margin-top: auto;
+  }
+
+  /* Price */
+  #{{ section_id }} .ts-product-card__price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 16px;
+    margin-bottom: 14px;
+    line-height: 24px;
+  }
+
+  #{{ section_id }} .ts-price--current {
+    font-weight: 700;
+    color: #000000;
+  }
+
+  #{{ section_id }} .ts-price--compare {
+    font-size: 16px;
+    color: #c8202f;
+    text-decoration: line-through;
+    line-height: 24px;
+  }
+
+  /* Button Link */
+  #{{ section_id }} .ts-product-card__btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #146b32;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+
+  /* Button color changes ONLY when hovering directly over the button */
+  #{{ section_id }} .ts-product-card__btn:hover {
+    background-color: #17803d;
+  }
+
+  /* Marquee Animation Support */
+  @keyframes tsMarquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  #{{ section_id }} .animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: tsMarquee 15s linear infinite;
+  }
+
+  #{{ section_id }} .card__promo-marquee {
+    z-index: 3;
+    pointer-events: none; /* Allows click through to full card link */
+  }
+
+  /* Footer View All */
+  #{{ section_id }} .ts-products__footer {
+    text-align: center;
+    margin-top: 32px;
+  }
+
+  #{{ section_id }} .ts-products__view-all {
+    display: inline-block;
+    color: #000000;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: underline;
+  }
+
+  /* Responsive Rules */
+  @media screen and (max-width: 1024px) {
+    #{{ section_id }} .ts-product-card {
+      flex: 0 0 calc((100% - 32px) / 3);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} .ts-products__title {
+      font-size: 22px;
+    }
+
+    #{{ section_id }} .ts-product-card {
+      flex: 0 0 calc((100% - 16px) / 2);
+      padding: 12px;
+      padding-bottom: 38px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    #{{ section_id }} .ts-product-card {
+      flex: 0 0 85%;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById({{ section_id | json }});
+    if (!root) return;
+
+    const track = root.querySelector('[data-ts-track]');
+    const slides = Array.from(root.querySelectorAll('[data-ts-slide]'));
+    const prev = root.querySelector('[data-ts-prev]');
+    const next = root.querySelector('[data-ts-next]');
+
+    if (!track || !slides.length) return;
+
+    let currentIndex = 0;
+
+    function getVisibleCount() {
+      const width = window.innerWidth;
+      if (width <= 480) return 1;
+      if (width <= 749) return 2;
+      if (width <= 1024) return 3;
+      return 4;
+    }
+
+    function getMaxIndex() {
+      return Math.max(0, slides.length - getVisibleCount());
+    }
+
+    function update() {
+      const maxIdx = getMaxIndex();
+      currentIndex = Math.max(0, Math.min(currentIndex, maxIdx));
+
+      const targetSlide = slides[currentIndex];
+      if (targetSlide) {
+        const offset = targetSlide.offsetLeft - slides[0].offsetLeft;
+        track.style.transform = `translateX(-${offset}px)`;
+      }
+
+      if (prev) prev.disabled = currentIndex === 0;
+      if (next) next.disabled = currentIndex >= maxIdx;
+    }
+
+    if (prev) {
+      prev.addEventListener('click', () => {
+        currentIndex = Math.max(0, currentIndex - 1);
+        update();
+      });
+    }
+
+    if (next) {
+      next.addEventListener('click', () => {
+        currentIndex = Math.min(getMaxIndex(), currentIndex + 1);
+        update();
+      });
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(update, 100);
+    });
+
+    update();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "TryScent Product Carousel",
+  "tag": "section",
+  "class": "section-tryscent-products",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content Settings"
+    },
+    {
+      "type": "text",
+      "id": "emoji",
+      "label": "Header Emoji",
+      "default": "🔥"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Senaste dofterna"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Card Button Text",
+      "default": "SE DOFTEN"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show Navigation Arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View All' Link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "'View All' Text",
+      "default": "VISA ALLA"
+    },
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max Width",
+      "min": 900,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1140
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card Background",
+      "default": "#FAFAFA"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted Text Color",
+      "default": "#6B7280"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Badge Background Color",
+      "default": "#396a3e"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Button Background",
+      "default": "#396a3e"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_color",
+      "label": "Button Hover Background",
+      "default": "#2d5231"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Button Text Color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent Product Carousel"
+    }
+  ]
+}
+{% endschema %}

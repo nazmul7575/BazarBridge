@@ -1,0 +1,718 @@
+{% liquid
+  assign section_id = 'ts-collection-' | append: section.id
+%}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
+  .ts-collection-section {
+    font-family: 'Figtree', sans-serif;
+    background-color: #f7f7f7;
+    padding: 60px 0px;
+    color: #1a1a1a;
+  }
+
+  .ts-collection-container {
+    max-width: 1140px; /* Reduced from 1360px to prevent overly wide cards */
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* Filter & Sorting Bar */
+  .ts-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+    font-size: 16px;
+    color: #666666;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .ts-toolbar__filters {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .ts-toolbar__filter-label {
+    font-weight: 500;
+    color: #555555;
+  }
+
+  /* Custom Dropdown Container */
+  .ts-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .ts-dropdown__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: inherit;
+    color: #333333;
+    padding: 4px 0;
+    font-weight: 400;
+  }
+
+  .ts-dropdown__btn:hover {
+    color: #111111;
+    text-decoration: underline;
+  }
+
+  .ts-dropdown__btn svg {
+    width: 20px;
+    height: 7px;
+    transition: transform 0.2s ease;
+  }
+
+  .ts-dropdown.is-active .ts-dropdown__btn svg {
+    transform: rotate(180deg);
+  }
+
+  /* Dropdown Menu Popup */
+  .ts-dropdown__menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 100px;
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    padding: 8px 0;
+    margin-top: 6px;
+    z-index: 50;
+    overflow-y: auto;
+  }
+
+  .ts-dropdown.is-active .ts-dropdown__menu {
+    display: block;
+  }
+
+  .ts-dropdown__right .ts-dropdown__menu {
+    left: auto;
+    right: 0;
+  }
+
+  .ts-dropdown__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    font-size: 16px;
+    color: #333333;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .ts-dropdown__item:hover {
+    background-color: #f5f5f5;
+    color: #111111;
+  }
+
+  .ts-dropdown__item.is-selected {
+    font-weight: 700;
+    color: #137c44;
+  }
+
+  .ts-toolbar__right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .ts-toolbar__count {
+    color: #666666;
+    font-size: 16px;
+  }
+
+  /* Product Grid - Optimized columns & spacing */
+  .ts-product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px 16px;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .ts-product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ts-product-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px 10px;
+    }
+
+    .ts-toolbar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .ts-toolbar__right {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  /* Product Card Hidden State */
+  .ts-product-card.is-hidden {
+    display: none !important;
+  }
+
+  /* Product Card */
+  .ts-product-card {
+    flex: 0 0 calc((100% - 48px) / 4);
+    min-width: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  /* Full Card Link Overlay */
+  .ts-product-card__full-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  /* Badge */
+  .ts-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: #137c44;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    z-index: 3;
+    line-height: 1.2;
+    pointer-events: none;
+  }
+
+  /* Image Wrapper */
+  .ts-card__image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    background-color: #ffffff;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    z-index: 2;
+  }
+
+  .ts-card__image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Card Details */
+  .ts-card__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    position: relative;
+    z-index: 2;
+  }
+
+  .ts-card__title {
+    font-size: 17px; /* Scaled nicely to fit card bounds */
+    font-weight: 700;
+    line-height: 24px;
+    margin: 0 0 10px;
+    overflow: hidden;
+    min-height: 48px;
+  }
+
+  .ts-card__title a {
+    color: var(--ts-text, #000000);
+    text-decoration: none;
+  }
+
+  .ts-card__title a:hover {
+    text-decoration: underline;
+  }
+
+  /* Inspired By Info */
+  .ts-card__inspired {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    min-height: 36px;
+  }
+
+  .ts-inspired__thumb-wrapper {
+    width: 48px; /* Proportional scale down for compactness */
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .ts-card__inspired-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .ts-card__inspired-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .ts-card__inspired-label {
+    font-size: 11px;
+    color: #777777;
+  }
+
+  .ts-card__inspired-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #222222;
+  }
+
+  /* Price Area */
+  .ts-card__price-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+
+  .ts-card__price {
+    font-weight: 700;
+    color: #000000;
+  }
+
+  .ts-card__price--compare {
+    color: #d93838;
+    text-decoration: line-through;
+    font-weight: 400;
+    font-size: 12px;
+  }
+
+  /* CTA Button */
+  .ts-card__button {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #146b32;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+  }
+
+  .ts-card__button:hover {
+    background-color: #17803d;
+  }
+
+  /* View All Button Wrapper */
+  .ts-collection__footer {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .ts-view-all-btn {
+    display: inline-block;
+    background: transparent;
+    cursor: pointer;
+    color: #000000;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: underline;
+  }
+
+  /* Promo Marquee Animation */
+  @keyframes tsMarquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: tsMarquee 15s linear infinite;
+  }
+
+  .card__promo-marquee {
+    z-index: 3;
+    pointer-events: none;
+  }
+</style>
+
+<div class="ts-collection-section" id="{{ section_id }}">
+  <div class="ts-collection-container">
+
+    <!-- Filter & Sort Toolbar -->
+    <div class="ts-toolbar">
+      
+      <!-- Filter Left Side -->
+      <div class="ts-toolbar__filters">
+        <span class="ts-toolbar__filter-label">Filter:</span>
+
+        <!-- Brand Filter Dropdown -->
+        <div class="ts-dropdown js-ts-dropdown">
+          <button class="ts-dropdown__btn" type="button">
+            Brand
+            <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="#555" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </button>
+          <div class="ts-dropdown__menu">
+            {%- assign filter_found = false -%}
+            {%- for filter in collection.filters -%}
+              {%- assign label_downcase = filter.label | downcase -%}
+              {%- if label_downcase contains 'brand' or label_downcase contains 'varumärke' or label_downcase contains 'vendor' -%}
+                {%- assign filter_found = true -%}
+                {%- for value in filter.values -%}
+                  <a href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}" class="ts-dropdown__item {% if value.active %}is-selected{% endif %}">
+                    <span>{{ value.label }}</span>
+                    <span style="font-size: 11px; color: #888;">({{ value.count }})</span>
+                  </a>
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if filter_found == false -%}
+              {%- for vendor in collection.all_vendors -%}
+                <a href="{{ collection.url }}/{{ vendor | handle }}" class="ts-dropdown__item {% if current_tags contains vendor %}is-selected{% endif %}">
+                  <span>{{ vendor }}</span>
+                </a>
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+        </div>
+
+        <!-- Gender Filter Dropdown -->
+        <div class="ts-dropdown js-ts-dropdown">
+          <button class="ts-dropdown__btn" type="button">
+            Gender
+            <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="#555" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </button>
+          <div class="ts-dropdown__menu">
+            {%- for filter in collection.filters -%}
+              {%- assign label_downcase = filter.label | downcase -%}
+              {%- if label_downcase contains 'gender' or label_downcase contains 'kön' -%}
+                {%- for value in filter.values -%}
+                  <a href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}" class="ts-dropdown__item {% if value.active %}is-selected{% endif %}">
+                    <span>{{ value.label }}</span>
+                    <span style="font-size: 11px; color: #888;">({{ value.count }})</span>
+                  </a>
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <!-- Season Filter Dropdown -->
+        <div class="ts-dropdown js-ts-dropdown">
+          <button class="ts-dropdown__btn" type="button">
+            Season
+            <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="#555" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </button>
+          <div class="ts-dropdown__menu">
+            {%- for filter in collection.filters -%}
+              {%- assign label_downcase = filter.label | downcase -%}
+              {%- if label_downcase contains 'season' or label_downcase contains 'säsong' -%}
+                {%- for value in filter.values -%}
+                  <a href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}" class="ts-dropdown__item {% if value.active %}is-selected{% endif %}">
+                    <span>{{ value.label }}</span>
+                    <span style="font-size: 11px; color: #888;">({{ value.count }})</span>
+                  </a>
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <!-- Occasion Filter Dropdown -->
+        <div class="ts-dropdown js-ts-dropdown">
+          <button class="ts-dropdown__btn" type="button">
+            Occasion
+            <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="#555" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </button>
+          <div class="ts-dropdown__menu">
+            {%- for filter in collection.filters -%}
+              {%- assign label_downcase = filter.label | downcase -%}
+              {%- if label_downcase contains 'occasion' or label_downcase contains 'tillfälle' -%}
+                {%- for value in filter.values -%}
+                  <a href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}" class="ts-dropdown__item {% if value.active %}is-selected{% endif %}">
+                    <span>{{ value.label }}</span>
+                    <span style="font-size: 11px; color: #888;">({{ value.count }})</span>
+                  </a>
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sort Right Side -->
+      <div class="ts-toolbar__right">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span class="ts-toolbar__filter-label">Sort by:</span>
+
+          <!-- Sort Dropdown -->
+          <div class="ts-dropdown ts-dropdown__right js-ts-dropdown">
+            {% assign current_sort_by = collection.sort_by | default: collection.default_sort_by %}
+            {% assign current_sort_name = "Featured" %}
+            {% for option in collection.sort_options %}
+              {% if option.value == current_sort_by %}
+                {% assign current_sort_name = option.name %}
+              {% endif %}
+            {% endfor %}
+
+            <button class="ts-dropdown__btn" type="button">
+              <span>{{ current_sort_name }}</span>
+              <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="#555" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </button>
+
+            <div class="ts-dropdown__menu">
+              {% for option in collection.sort_options %}
+                <a 
+                  href="?sort_by={{ option.value }}" 
+                  class="ts-dropdown__item {% if option.value == current_sort_by %}is-selected{% endif %}"
+                >
+                  <span>{{ option.name }}</span>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <div class="ts-toolbar__count">
+          {{ collection.products_count }} {{ collection.products_count | pluralize: 'produkt', 'produkter' }}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Product Grid -->
+    <div class="ts-product-grid">
+      {% for product in collection.products %}
+        
+        {% assign is_bestseller = false %}
+        {% if product.tags contains 'Bästsäljare' or product.tags contains 'bestseller' %}
+          {% assign is_bestseller = true %}
+        {% endif %}
+
+        <div class="ts-product-card {% if forloop.index > 20 %}is-hidden{% endif %}" data-product-card>
+          
+          <!-- Full Card Click Link -->
+          <a href="{{ product.url }}" class="ts-product-card__full-link" aria-label="{{ product.title | escape }}"></a>
+
+          {% if is_bestseller %}
+            <div class="ts-badge">
+              ★ Bästsäljare
+            </div>
+          {% endif %}
+
+          <a href="{{ product.url }}" class="ts-card__image-wrapper">
+            {% if product.featured_media %}
+              <img
+                src="{{ product.featured_media | image_url: width: 400 }}"
+                alt="{{ product.title | escape }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              {{ 'product-1' | placeholder_svg_tag }}
+            {% endif %}
+          </a>
+
+          <div class="ts-card__content">
+            <h3 class="ts-card__title">
+              <a href="{{ product.url }}">Doftar som... {{ product.title }}</a>
+            </h3>
+
+            <!-- Inspiration Metaobject Section -->
+            {%- assign inspiration_obj = product.metafields.custom.inspiration.value -%}
+            
+            {% if inspiration_obj != blank %}
+              {%- liquid
+                assign inspired_name = inspiration_obj.name | default: inspiration_obj.title | default: inspiration_obj.label
+                assign inspired_img_object = inspiration_obj.image | default: inspiration_obj.photo | default: inspiration_obj.bottle_image
+              -%}
+
+              <div class="ts-card__inspired">
+                <div class="ts-inspired__thumb-wrapper">
+                  {% if inspired_img_object != blank %}
+                    {% assign inspired_img_url = inspired_img_object | image_url: width: 80 %}
+                    {% if inspired_img_url != blank %}
+                      <img
+                        src="{{ inspired_img_url }}"
+                        alt="{{ inspired_name | escape }}"
+                        loading="lazy"
+                        class="ts-card__inspired-icon"
+                      >
+                    {% endif %}
+                  {% endif %}
+                </div>
+                <div class="ts-card__inspired-text">
+                  <span class="ts-card__inspired-label">Inspirerad av:</span>
+                  <span class="ts-card__inspired-name">{{ inspired_name }}</span>
+                </div>
+              </div>
+            {% endif %}
+
+            <div class="ts-card__price-wrapper">
+              <span class="ts-card__price">{{ product.price | money }}</span>
+              {% if product.compare_at_price > product.price %}
+                <span class="ts-card__price--compare">{{ product.compare_at_price | money }}</span>
+              {% endif %}
+            </div>
+
+            <a href="{{ product.url }}" class="ts-card__button">
+              SE DOFTEN
+            </a>
+          </div>
+
+          <!-- Promo Marquee Banner -->
+          {% if product.compare_at_price > product.price %}
+            <div class="card__promo-marquee absolute left-0 right-0 bottom-0 bg-[#137c44] text-white overflow-hidden py-1.5" aria-label="30% RABATT">
+              <div class="card__promo-marquee-rail flex whitespace-nowrap animate-marquee">
+                <div class="card__promo-marquee-group flex items-center shrink-0">
+                  <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                  <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                  <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                  <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                  <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                  <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                </div>
+                <div class="card__promo-marquee-group flex items-center shrink-0" aria-hidden="true">
+                  <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                  <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                  <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                  <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                  <span class="card__promo-marquee-text font-bold text-xs tracking-wider px-2">30% RABATT</span>
+                  <span class="card__promo-marquee-dot w-1 h-1 bg-white rounded-full mx-1" aria-hidden="true"></span>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+        </div>
+
+      {% endfor %}
+    </div>
+
+    <!-- View All Button -->
+    {% if collection.products.size > 20 %}
+      <div class="ts-collection__footer" id="ts-view-all-wrapper">
+        <button type="button" class="ts-view-all-btn" id="ts-view-all-btn">
+          VISA ALLA
+        </button>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const section = document.getElementById({{ section_id | json }});
+    if (!section) return;
+
+    const dropdowns = section.querySelectorAll('.js-ts-dropdown');
+
+    dropdowns.forEach(dropdown => {
+      const btn = dropdown.querySelector('.ts-dropdown__btn');
+
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        dropdowns.forEach(other => {
+          if (other !== dropdown) {
+            other.classList.remove('is-active');
+          }
+        });
+
+        dropdown.classList.toggle('is-active');
+      });
+    });
+
+    document.addEventListener('click', function() {
+      dropdowns.forEach(dropdown => {
+        dropdown.classList.remove('is-active');
+      });
+    });
+
+    const viewAllBtn = section.querySelector('#ts-view-all-btn');
+    const viewAllWrapper = section.querySelector('#ts-view-all-wrapper');
+
+    if (viewAllBtn) {
+      viewAllBtn.addEventListener('click', function() {
+        const hiddenCards = section.querySelectorAll('.ts-product-card.is-hidden');
+        hiddenCards.forEach(card => {
+          card.classList.remove('is-hidden');
+        });
+        if (viewAllWrapper) {
+          viewAllWrapper.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "TryScent Collection Grid",
+  "class": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "TryScent Collection Grid"
+    }
+  ]
+}
+{% endschema %}

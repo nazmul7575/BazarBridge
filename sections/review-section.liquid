@@ -1,0 +1,975 @@
+{% liquid
+  assign section_id = 'ts-reviews-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="ts-reviews"
+  style="
+    --ts-bg: {{ section.settings.background_color }};
+    --ts-top: {{ section.settings.padding_top }}px;
+    --ts-bottom: {{ section.settings.padding_bottom }}px;
+    --ts-max: {{ section.settings.content_width }}px;
+    --ts-gap: {{ section.settings.card_gap }}px;
+    --ts-card-bg: {{ section.settings.card_background }};
+    --ts-card-border: {{ section.settings.border_color }};
+    --ts-radius: {{ section.settings.card_radius }}px;
+
+    /* Dynamic Customizations for Card Texts */
+    --ts-title-size: {{ section.settings.card_title_size }}px;
+    --ts-title-weight: {{ section.settings.card_title_weight }};
+    --ts-title-color: {{ section.settings.card_title_color }};
+
+    --ts-text1-size: {{ section.settings.card_text1_size }}px;
+    --ts-text1-weight: {{ section.settings.card_text1_weight }};
+    --ts-text1-color: {{ section.settings.card_text1_color }};
+
+    --ts-text2-size: {{ section.settings.card_text2_size }}px;
+    --ts-text2-weight: {{ section.settings.card_text2_weight }};
+    --ts-text2-color: {{ section.settings.card_text2_color }};
+
+    --ts-name-size: {{ section.settings.card_name_size }}px;
+    --ts-name-weight: {{ section.settings.card_name_weight }};
+    --ts-name-color: {{ section.settings.card_name_color }};
+
+    --ts-sub-size: {{ section.settings.card_sub_size }}px;
+    --ts-sub-weight: {{ section.settings.card_sub_weight }};
+    --ts-sub-color: {{ section.settings.card_sub_color }};
+  "
+>
+  <div class="ts-reviews__inner">
+    <div class="ts-reviews__heading">
+      {% if section.settings.show_main_stars %}
+        <div class="ts-main-stars" aria-label="5 out of 5 stars">
+          {% for i in (1..5) %}
+            <span class="ts-star-box">★</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.eyebrow != blank %}
+        <p class="ts-reviews__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2>{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+    </div>
+
+    <div class="ts-carousel" data-ts-carousel>
+      <div class="ts-carousel__viewport" data-ts-viewport aria-roledescription="carousel">
+        <div class="ts-carousel__track" data-ts-track>
+          {% for block in section.blocks %}
+            <article class="ts-review-card" data-ts-slide {{ block.shopify_attributes }}>
+              <div class="ts-review-card__meta">
+                <div class="ts-small-stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+                  {% for i in (1..5) %}
+                    <span class="ts-star-box {% if i > block.settings.rating %}ts-star-box--muted{% endif %}">★</span>
+                  {% endfor %}
+                </div>
+                {% if section.settings.show_trustpilot_label %}
+                  <a
+                    href="{{ section.settings.trustpilot_url | default: 'https://se.trustpilot.com/review/tryscent.co' }}"
+                    target="_blank"
+                    rel="noopener"
+                    class="ts-trustpilot"
+                  >
+                    <span class="ts-trustpilot__dot">●</span>
+                    {{ section.settings.review_source | escape }}
+                  </a>
+                {% endif %}
+              </div>
+
+              {% if block.settings.review_title != blank %}
+                <h3 class="ts-review-card__title">
+                  "{{ block.settings.review_title | escape }}"
+                </h3>
+              {% endif %}
+
+              {% if block.settings.review_text_1 != blank %}
+                <p class="ts-review-card__text-1">
+                  {{ block.settings.review_text_1 | escape }}
+                </p>
+              {% endif %}
+
+              {% if block.settings.review_text_2 != blank %}
+                <p class="ts-review-card__text-2">
+                  {{ block.settings.review_text_2 | escape }}
+                </p>
+              {% endif %}
+
+              <div class="ts-review-card__footer">
+                {% if block.settings.reviewer_name != blank %}
+                  <p class="ts-review-card__name">
+                    {{ block.settings.reviewer_name | escape }}
+                  </p>
+                {% endif %}
+                {% if block.settings.reviewer_note != blank %}
+                  <p class="ts-review-card__note">
+                    {{ block.settings.reviewer_note | escape }}
+                  </p>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if section.blocks.size > 0 and section.settings.show_navigation %}
+        <div class="ts-carousel__navigation">
+          <button class="ts-carousel__arrow" type="button" data-ts-prev aria-label="Previous reviews">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="ts-carousel__dots" data-ts-dots aria-label="Choose review page"></div>
+
+          <button class="ts-carousel__arrow" type="button" data-ts-next aria-label="Next reviews">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    background: var(--ts-bg);
+    padding: var(--ts-top) 24px var(--ts-bottom);
+    overflow: hidden;
+    font-family: inherit;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-reviews__inner {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+  }
+
+  /* Main Heading */
+  #{{ section_id }} .ts-reviews__heading {
+    text-align: center;
+    margin: 0 auto 36px;
+    max-width: 800px;
+  }
+
+  #{{ section_id }} .ts-main-stars {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    margin-bottom: 14px;
+  }
+
+  #{{ section_id }} .ts-star-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #00b67a;
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 1;
+    border-radius: 2px;
+  }
+
+  #{{ section_id }} .ts-main-stars .ts-star-box {
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+  }
+
+  #{{ section_id }} .ts-small-stars .ts-star-box {
+    width: 18px;
+    height: 18px;
+    font-size: 13px;
+  }
+
+  #{{ section_id }} .ts-star-box--muted {
+    background: #e2e8f0;
+    color: #a0aec0;
+  }
+
+  #{{ section_id }} .ts-reviews__eyebrow {
+    color: #00b67a;
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 800;
+    letter-spacing: 1.56px;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+
+  #{{ section_id }} .ts-reviews__heading h2 {
+    color: #121212;
+    font-size: 26px;
+    line-height: 1.25;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  /* Review Cards & Carousel */
+  #{{ section_id }} .ts-carousel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #{{ section_id }} .ts-carousel__viewport {
+    width: 100%;
+    max-width: 1100px;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+
+  #{{ section_id }} .ts-carousel__track {
+    display: flex;
+    align-items: stretch;
+    gap: var(--ts-gap);
+    transition: transform 450ms cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+  }
+
+  #{{ section_id }} .ts-review-card {
+    flex: 0 0 calc((100% - (var(--ts-gap) * 2)) / 3);
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--ts-card-bg);
+    border: 1px solid var(--ts-card-border);
+    border-radius: var(--ts-radius);
+    padding: 24px 22px 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  }
+
+  #{{ section_id }} .ts-review-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  #{{ section_id }} .ts-small-stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  #{{ section_id }} .ts-trustpilot {
+    color: #0000008c;
+    font-size: 11px;
+    line-height: 1.4;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: text-decoration 0.2s ease;
+  }
+
+  #{{ section_id }} .ts-trustpilot:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  #{{ section_id }} .ts-trustpilot__dot {
+    color: #00b67a;
+    margin-right: 3px;
+  }
+
+  /* 1. Headline Style */
+  #{{ section_id }} .ts-review-card__title {
+    font-size: var(--ts-title-size);
+    font-weight: var(--ts-title-weight);
+    color: var(--ts-title-color);
+    line-height: 1.4;
+    margin: 0 0 12px;
+  }
+
+  /* 2. First Body Text Style */
+  #{{ section_id }} .ts-review-card__text-1 {
+    font-size: var(--ts-text1-size);
+    font-weight: var(--ts-text1-weight);
+    color: var(--ts-text1-color);
+    line-height: 1.6;
+    margin: 0 0 12px;
+    overflow-wrap: anywhere;
+  }
+
+  /* 3. Second Body Text Style */
+  #{{ section_id }} .ts-review-card__text-2 {
+    font-size: var(--ts-text2-size);
+    font-weight: 700;
+    color: #121212;
+    line-height: 1.6;
+    margin: 0 0 12px;
+    overflow-wrap: anywhere;
+  }
+
+  /* Footer Group */
+  #{{ section_id }} .ts-review-card__footer {
+    margin-top: auto;
+    padding-top: 12px;
+  }
+
+  /* 4. Reviewer Name Style */
+  #{{ section_id }} .ts-review-card__name {
+    font-size: var(--ts-name-size);
+    font-weight: var(--ts-name-weight);
+    color: var(--ts-name-color);
+    line-height: 1.4;
+    margin: 0 0 4px;
+  }
+
+  /* 5. Verification Subtext Style */
+  #{{ section_id }} .ts-review-card__note {
+    font-size: var(--ts-sub-size);
+    font-weight: var(--ts-sub-weight);
+    color: #0000009e;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  /* Navigation */
+  #{{ section_id }} .ts-carousel__navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+    width: 100%;
+  }
+
+  #{{ section_id }} .ts-carousel__arrow {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--ts-card-border);
+    border-radius: 50%;
+    background: #ffffff;
+    color: #111827;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+  }
+
+  #{{ section_id }} .ts-carousel__arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  #{{ section_id }} .ts-carousel__arrow:not(:disabled):hover {
+    background-color: #000000;
+    color: #ffffff;
+    border-color: #000000;
+  }
+
+  #{{ section_id }} .ts-carousel__arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  #{{ section_id }} .ts-carousel__dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  #{{ section_id }} .ts-carousel__dot {
+    width: 7px;
+    height: 7px;
+    border: 0;
+    border-radius: 50%;
+    background: #cbd5e0;
+    padding: 0;
+    cursor: pointer;
+    transition: background 180ms ease;
+  }
+
+  #{{ section_id }} .ts-carousel__dot.is-active {
+    background: #00b67a;
+  }
+
+  /* Tablet & Mobile Breakpoints */
+  @media screen and (max-width: 900px) {
+    #{{ section_id }} .ts-review-card {
+      flex: 0 0 calc((100% - 16px) / 2);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    #{{ section_id }} .ts-reviews__heading h2 {
+      font-size: {{ section.settings.mobile_heading_size }}px;
+    }
+
+    #{{ section_id }} .ts-review-card {
+      flex: 0 0 85%;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById({{ section_id | json }});
+    if (!root) return;
+
+    const track = root.querySelector('[data-ts-track]');
+    const slides = Array.from(root.querySelectorAll('[data-ts-slide]'));
+    const dotsContainer = root.querySelector('[data-ts-dots]');
+    const prev = root.querySelector('[data-ts-prev]');
+    const next = root.querySelector('[data-ts-next]');
+
+    if (!track || !slides.length || !dotsContainer) return;
+
+    let currentIndex = 0;
+
+    function getVisibleCount() {
+      const width = window.innerWidth;
+      if (width <= 749) return 1;
+      if (width <= 900) return 2;
+      return 3;
+    }
+
+    function getMaxIndex() {
+      return Math.max(0, slides.length - getVisibleCount());
+    }
+
+    function buildDots() {
+      dotsContainer.innerHTML = '';
+      const maxIdx = getMaxIndex();
+
+      for (let i = 0; i <= maxIdx; i++) {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'ts-carousel__dot';
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        dot.addEventListener('click', () => {
+          currentIndex = i;
+          update();
+        });
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    function update() {
+      const maxIdx = getMaxIndex();
+      currentIndex = Math.max(0, Math.min(currentIndex, maxIdx));
+
+      const targetSlide = slides[currentIndex];
+      if (targetSlide) {
+        const offset = targetSlide.offsetLeft - slides[0].offsetLeft;
+        track.style.transform = `translateX(-${offset}px)`;
+      }
+
+      Array.from(dotsContainer.children).forEach((dot, idx) => {
+        dot.classList.toggle('is-active', idx === currentIndex);
+      });
+
+      if (prev) prev.disabled = currentIndex === 0;
+      if (next) next.disabled = currentIndex >= maxIdx;
+    }
+
+    if (prev) {
+      prev.addEventListener('click', () => {
+        currentIndex = Math.max(0, currentIndex - 1);
+        update();
+      });
+    }
+
+    if (next) {
+      next.addEventListener('click', () => {
+        currentIndex = Math.min(getMaxIndex(), currentIndex + 1);
+        update();
+      });
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        buildDots();
+        update();
+      }, 100);
+    });
+
+    buildDots();
+    update();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "TryScent Reviews Custom",
+  "tag": "section",
+  "class": "section-tryscent-reviews",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Headings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_main_stars",
+      "label": "Show top 5 stars",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "DÄRFÖR FASTNADE DE FÖR TRYSCENT"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Main Heading",
+      "default": "De säger det bättre än vi någonsin skulle kunna."
+    },
+    {
+      "type": "range",
+      "id": "mobile_heading_size",
+      "label": "Mobile Heading Size",
+      "min": 18,
+      "max": 34,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trustpilot_label",
+      "label": "Show Trustpilot badge text",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_source",
+      "label": "Review Source Label",
+      "default": "Trustpilot-recension"
+    },
+    {
+      "type": "url",
+      "id": "trustpilot_url",
+      "label": "Trustpilot Link URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "Show Carousel Controls",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card Corner Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Card Text Typography & Colors"
+    },
+    {
+      "type": "paragraph",
+      "content": "1. Headline Settings"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "label": "Headline Font Size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "card_title_weight",
+      "label": "Headline Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal (400)" },
+        { "value": "600", "label": "Semi-bold (600)" },
+        { "value": "700", "label": "Bold (700)" },
+        { "value": "800", "label": "Extra Bold (800)" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Headline Color",
+      "default": "#121212"
+    },
+    {
+      "type": "paragraph",
+      "content": "2. First Body Text Settings"
+    },
+    {
+      "type": "range",
+      "id": "card_text1_size",
+      "label": "Text 1 Font Size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "card_text1_weight",
+      "label": "Text 1 Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semi-bold (600)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "color",
+      "id": "card_text1_color",
+      "label": "Text 1 Color",
+      "default": "#4A5568"
+    },
+    {
+      "type": "paragraph",
+      "content": "3. Second Body Text Settings"
+    },
+    {
+      "type": "range",
+      "id": "card_text2_size",
+      "label": "Text 2 Font Size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "card_text2_weight",
+      "label": "Text 2 Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semi-bold (600)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "color",
+      "id": "card_text2_color",
+      "label": "Text 2 Color",
+      "default": "#121212"
+    },
+    {
+      "type": "paragraph",
+      "content": "4. Reviewer Name Settings"
+    },
+    {
+      "type": "range",
+      "id": "card_name_size",
+      "label": "Name Font Size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "card_name_weight",
+      "label": "Name Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal (400)" },
+        { "value": "600", "label": "Semi-bold (600)" },
+        { "value": "700", "label": "Bold (700)" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "color",
+      "id": "card_name_color",
+      "label": "Name Color",
+      "default": "#121212"
+    },
+    {
+      "type": "paragraph",
+      "content": "5. Verification Subtext Settings"
+    },
+    {
+      "type": "range",
+      "id": "card_sub_size",
+      "label": "Subtext Font Size",
+      "min": 9,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "select",
+      "id": "card_sub_weight",
+      "label": "Subtext Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal (400)" },
+        { "value": "500", "label": "Medium (500)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "color",
+      "id": "card_sub_color",
+      "label": "Subtext Color",
+      "default": "#718096"
+    },
+    {
+      "type": "header",
+      "content": "General Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card Background Color",
+      "default": "#FAFAFA"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Card Border Color",
+      "default": "#E2E8F0"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Customer Review",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "review_title",
+          "label": "Headline",
+          "default": "Jag har redan fått flera komplimanger efter att ha använt dem."
+        },
+        {
+          "type": "textarea",
+          "id": "review_text_1",
+          "label": "Review Text Section 1",
+          "default": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning."
+        },
+        {
+          "type": "textarea",
+          "id": "review_text_2",
+          "label": "Review Text Section 2 (Bold/Different Style)",
+          "default": "Samma komplimanger. Ett bättre pris."
+        },
+        {
+          "type": "text",
+          "id": "reviewer_name",
+          "label": "Reviewer Name",
+          "default": "Elin Lundqvist"
+        },
+        {
+          "type": "text",
+          "id": "reviewer_note",
+          "label": "Verification Subtext",
+          "default": "Verifierad recensent på Trustpilot"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent Reviews",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Jag har redan fått flera komplimanger efter att ha använt dem.",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Elin Lundqvist",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Den doftar EXAKT som Dior Homme Intense ... nästan skrämmande likt.",
+            "review_text_1": "Den mörka, krämiga och lyxiga karaktären man förväntar sig fanns där redan från första sprayen.",
+            "review_text_2": "Den välbekanta doftupplevelsen, utan designerpriset.",
+            "reviewer_name": "Johan Bergström",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Bättre än några av de dyraste parfymerna du kan köpa.",
+            "review_text_1": "Doften överträffade förväntningarna och levererade den kvalitet man vanligtvis förknippar med ett betydligt högre pris.",
+            "review_text_2": "Expensive presence. Unexpected price.",
+            "reviewer_name": "Moa",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Deras parfymer är som äkta.",
+            "review_text_1": "TryScent gillar jag faktiskt, dom är fantastiska. Jag har minst 20 flaskor TryScent-parfymer och använder bara dem",
+            "review_text_2": "😘",
+            "reviewer_name": "Nermina",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Stämmer bra in på originaldoften 👍",
+            "review_text_1": "Dock håller den inte i hela dagen men kommer inte ihåg om originalet gjorde det heller.",
+            "review_text_2": "Har beställt 6 nya dofter och återkommer med betyg på dem.",
+            "reviewer_name": "Dan Lindau",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Väldigt bra service.",
+            "review_text_1": "Fick en flaska som läckte lite i kragen, påtalade detta, och utan tvekan skickades en ny flaska samt två överraskningsdofter som kompensation!",
+            "review_text_2": "Mkt tacksam!",
+            "reviewer_name": "Viktor Matsenius",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Gör sitt jobb galant!",
+            "review_text_1": "Bra hållbarhet och otroligt snabb leverans.",
+            "review_text_2": "Rekommenderas starkt till alla som vill lukta gott utan att tömma plånboken.",
+            "reviewer_name": "Sofia K.",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Imponerad över kvaliteten.",
+            "review_text_1": "Var lite tveksam först men blev fantastiskt överraskad.",
+            "review_text_2": "Luktar exakt som lyxmärkena och håller hela kvällen.",
+            "reviewer_name": "Alexander M.",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Perfekt vardagsdoft!",
+            "review_text_1": "Smidiga flaskor och superbra dofter.",
+            "review_text_2": "Kommer garanterat att beställa igen inom kort.",
+            "reviewer_name": "Emma H.",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Överträffade alla förväntningar.",
+            "review_text_1": "Fantastiska dofter till ett oslagbart pris.",
+            "review_text_2": "Mina kollegor på jobbet har redan frågat vad för parfym jag använder!",
+            "reviewer_name": "Marcus B.",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

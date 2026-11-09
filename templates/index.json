@@ -1,0 +1,1242 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero_section_pMf84e": {
+      "type": "hero-section",
+      "name": "Hero Banner",
+      "settings": {
+        "heading": "Dina favoritdofter för mindre",
+        "paragraph": "Handla dina favoritdofter till ännu bättre priser! Och spara ännu mer med paketdeals!",
+        "button1_text": "Hitta din favoritparfym",
+        "button1_link": "shopify://collections/all",
+        "button2_text": "Bästsäljare",
+        "button2_link": "shopify://collections/best-seller"
+      }
+    },
+    "benifit_section_fY4MKW": {
+      "type": "benifit-section",
+      "blocks": {
+        "benefit_RwKTVH": {
+          "type": "benefit",
+          "settings": {
+            "benefit_image": "shopify://shop_images/icons_eu.webp",
+            "benefit_image_url": "",
+            "benefit_icon": "perfume",
+            "title": "Ren formula",
+            "text": "Utan hormonstörande ämnen och parabener."
+          }
+        },
+        "benefit_JckRH9": {
+          "type": "benefit",
+          "settings": {
+            "benefit_image": "shopify://shop_images/icons_quality.webp",
+            "benefit_image_url": "",
+            "benefit_icon": "perfume",
+            "title": "Över 100 dofter att välja mellan",
+            "text": "En doft som märks och stannar kvar."
+          }
+        },
+        "benefit_Yd3nVC": {
+          "type": "benefit",
+          "settings": {
+            "benefit_image": "shopify://shop_images/icons_guarantee.webp",
+            "benefit_image_url": "",
+            "benefit_icon": "guarantee",
+            "title": "60 dagars garanti",
+            "text": "Testa parfymen hemma. Är den inte rätt för dig har du 60 dagar på dig att returnera den."
+          }
+        },
+        "benefit_3kNKdH": {
+          "type": "benefit",
+          "settings": {
+            "benefit_image": "shopify://shop_images/icons_time.webp",
+            "benefit_image_url": "",
+            "benefit_icon": "clock",
+            "title": "Långvarig doft",
+            "text": "Skapad för att hålla sig märkbar i upp till 12 timmar."
+          }
+        }
+      },
+      "block_order": [
+        "benefit_RwKTVH",
+        "benefit_JckRH9",
+        "benefit_Yd3nVC",
+        "benefit_3kNKdH"
+      ],
+      "name": "Benefits Row Only",
+      "settings": {
+        "content_width": 1100,
+        "grid_gap": 32,
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "background_color": "#ffffff",
+        "title_color": "#111827",
+        "title_size": 16,
+        "text_color": "#4a5568",
+        "text_size": 13,
+        "icon_size": 36
+      }
+    },
+    "review_section_nMC4hC": {
+      "type": "review-section",
+      "blocks": {
+        "review_idpwgb": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Jag har redan fått flera komplimanger efter att ha använt dem.",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Elin Lundqvist",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        "review_WWhrz8": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Den doftar EXAKT som Dior Homme Intense ... nästan skrämmande likt.",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Johan Bergström",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        "review_myUfg9": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Bättre än några av de dyraste parfymerna du kan köpa.",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Moa",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        "review_BFVdcN": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Deras parfymer är som äkta.",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Nermina",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        "review_BQXwT7": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Stämmer bra in på originaldoften 👍",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Dan Lindau",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        "review_UtLy7V": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Väldigt bra service.",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Viktor Matsenius",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        "review_7U9DQD": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Gör sitt jobb galant!",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Sofia K.",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        "review_eiPKcT": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Imponerad över kvaliteten.",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Alexander M.",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        "review_zMxkBa": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Perfekt vardagsdoft!",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Emma H.",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        },
+        "review_cFEiKn": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_title": "Överträffade alla förväntningar.",
+            "review_text_1": "Det folk märker först är inte flaskan eller priset, utan hur doften förändrar din utstrålning.",
+            "review_text_2": "Samma komplimanger. Ett bättre pris.",
+            "reviewer_name": "Marcus B.",
+            "reviewer_note": "Verifierad recensent på Trustpilot"
+          }
+        }
+      },
+      "block_order": [
+        "review_idpwgb",
+        "review_WWhrz8",
+        "review_myUfg9",
+        "review_BFVdcN",
+        "review_BQXwT7",
+        "review_UtLy7V",
+        "review_7U9DQD",
+        "review_eiPKcT",
+        "review_zMxkBa",
+        "review_cFEiKn"
+      ],
+      "name": "TryScent Reviews",
+      "settings": {
+        "show_main_stars": true,
+        "eyebrow": "DÄRFÖR FASTNADE DE FÖR TRYSCENT",
+        "heading": "De säger det bättre än vi någonsin skulle kunna.",
+        "mobile_heading_size": 22,
+        "show_trustpilot_label": true,
+        "review_source": "Trustpilot-recension",
+        "trustpilot_url": "",
+        "show_navigation": true,
+        "content_width": 1100,
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "card_gap": 20,
+        "card_radius": 8,
+        "card_title_size": 14,
+        "card_title_weight": "700",
+        "card_title_color": "#121212",
+        "card_text1_size": 13,
+        "card_text1_weight": "400",
+        "card_text1_color": "#4a5568",
+        "card_text2_size": 13,
+        "card_text2_weight": "400",
+        "card_text2_color": "#121212",
+        "card_name_size": 13,
+        "card_name_weight": "600",
+        "card_name_color": "#121212",
+        "card_sub_size": 11,
+        "card_sub_weight": "400",
+        "card_sub_color": "#718096",
+        "background_color": "#ffffff",
+        "card_background": "#fafafa",
+        "border_color": "#e2e8f0"
+      }
+    },
+    "product_list_6XK4EA": {
+      "type": "ts-product-carousel",
+      "name": "TryScent Product Carousel",
+      "settings": {
+        "emoji": "🔥",
+        "heading": "Senaste dofterna",
+        "collection": "best-seller",
+        "products_to_show": 8,
+        "btn_text": "SE DOFTEN",
+        "show_arrows": true,
+        "show_view_all": true,
+        "view_all_label": "VISA ALLA",
+        "max_width": 1140,
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "bg_color": "#fcfbf9",
+        "card_bg_color": "#ffffff",
+        "text_color": "#111827",
+        "muted_color": "#6b7280",
+        "border_color": "#e5e7eb",
+        "badge_bg_color": "#396a3e",
+        "btn_bg_color": "#146b32",
+        "btn_hover_color": "#17803d",
+        "btn_text_color": "#ffffff"
+      }
+    },
+    "video_slider_ELKidm": {
+      "type": "video-slider",
+      "blocks": {
+        "ugc_card_kmzCEz": {
+          "type": "ugc_card",
+          "settings": {
+            "video": "shopify://files/videos/first.mp4",
+            "subtitle_text": "",
+            "product": "doftar-som-vanille-antique-2022-no-659",
+            "custom_title": "",
+            "custom_price": ""
+          }
+        },
+        "ugc_card_Uw6UAx": {
+          "type": "ugc_card",
+          "settings": {
+            "video": "shopify://files/videos/2nd.mp4",
+            "subtitle_text": "",
+            "product": "doftar-som-kirke-no-653",
+            "custom_title": "",
+            "custom_price": ""
+          }
+        },
+        "ugc_card_KcXEft": {
+          "type": "ugc_card",
+          "settings": {
+            "video": "shopify://files/videos/3rd.mp4",
+            "subtitle_text": "",
+            "product": "doftar-som-oud-satin-mood-no-651",
+            "custom_title": "",
+            "custom_price": ""
+          }
+        },
+        "ugc_card_qDUrYx": {
+          "type": "ugc_card",
+          "settings": {
+            "video": "shopify://files/videos/4th.mp4",
+            "subtitle_text": "",
+            "product": "",
+            "custom_title": "",
+            "custom_price": "169,99 kr"
+          }
+        },
+        "ugc_card_iVbeYR": {
+          "type": "ugc_card",
+          "settings": {
+            "video": "shopify://files/videos/5th.mp4",
+            "subtitle_text": "",
+            "product": "",
+            "custom_title": "",
+            "custom_price": "169,99 kr"
+          }
+        },
+        "ugc_card_AgqxP4": {
+          "type": "ugc_card",
+          "settings": {
+            "video": "shopify://files/videos/6th.mp4",
+            "subtitle_text": "",
+            "product": "",
+            "custom_title": "",
+            "custom_price": ""
+          }
+        },
+        "ugc_card_cLtXNb": {
+          "type": "ugc_card",
+          "settings": {
+            "video": "shopify://files/videos/7th.mp4",
+            "subtitle_text": "",
+            "product": "doftar-som-1861-naxos-no-656",
+            "custom_title": "Doftar som... Born in Rom...",
+            "custom_price": ""
+          }
+        }
+      },
+      "block_order": [
+        "ugc_card_kmzCEz",
+        "ugc_card_Uw6UAx",
+        "ugc_card_KcXEft",
+        "ugc_card_qDUrYx",
+        "ugc_card_iVbeYR",
+        "ugc_card_AgqxP4",
+        "ugc_card_cLtXNb"
+      ],
+      "name": "TryScent UGC Video Slider",
+      "settings": {
+        "heading": "Älskad av tusentals",
+        "show_arrows": true,
+        "max_width": 1140,
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "bg_color": "#fcfbf9",
+        "text_color": "#111827",
+        "card_bg_color": "#ffffff",
+        "card_text_color": "#111827",
+        "border_color": "#e5e7eb",
+        "btn_color": "#396a3e"
+      }
+    },
+    "product_list_wkepQh": {
+      "type": "ts-product-carousel",
+      "name": "TryScent Product Carousel",
+      "settings": {
+        "emoji": "",
+        "heading": "Älskad av tusentals",
+        "collection": "popular-products",
+        "products_to_show": 8,
+        "btn_text": "SE DOFTEN",
+        "show_arrows": true,
+        "show_view_all": true,
+        "view_all_label": "VISA ALLA",
+        "max_width": 1140,
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "bg_color": "#fcfbf9",
+        "card_bg_color": "#ffffff",
+        "text_color": "#000000",
+        "muted_color": "#6b7280",
+        "border_color": "#e5e7eb",
+        "badge_bg_color": "#396a3e",
+        "btn_bg_color": "#396a3e",
+        "btn_hover_color": "#2d5231",
+        "btn_text_color": "#ffffff"
+      }
+    },
+    "ts_eu_standards_hjWdqL": {
+      "type": "ts-eu-standards",
+      "blocks": {
+        "bullet_point_Pzr7YV": {
+          "type": "bullet_point",
+          "settings": {
+            "title": "Strikta säkerhetskrav",
+            "text": "Vi använder uteslutande ingredienser godkända av IFRA, vilket garanterar att doften är skonsam och säker att bära."
+          }
+        },
+        "bullet_point_b7EP8M": {
+          "type": "bullet_point",
+          "settings": {
+            "title": "Inga billigagenvägar",
+            "text": "Inga billiga utspädningar eller tveksamma kemikalier från gråzoner utanför Europa."
+          }
+        },
+        "bullet_point_feqm9B": {
+          "type": "bullet_point",
+          "settings": {
+            "title": "Certifierade anläggningar",
+            "text": "Varje flaska blandas och fylls i kontrollerade, europeiska laboratorier med full spårbarhet."
+          }
+        }
+      },
+      "block_order": [
+        "bullet_point_Pzr7YV",
+        "bullet_point_b7EP8M",
+        "bullet_point_feqm9B"
+      ],
+      "name": "TryScent EU Standards",
+      "settings": {
+        "heading": "Vad innebär det att en doft tillverkas i EU?",
+        "description": "Vi tillverkar alla våra parfymer enligt EU:s strikta kosmetikastandarder. Det betyder att du får en produkt som är lika säker för din hud som den är lyxig för dina sinnen.",
+        "image": "shopify://shop_images/MAGYX_Site_02.jpg",
+        "image_radius": 12,
+        "heading_size": 30,
+        "heading_color": "#121212",
+        "text_size": 18,
+        "text_line_height": 1.6,
+        "text_font_weight": "400",
+        "text_letter_spacing": 0,
+        "text_color": "#4b4b4b",
+        "background_color": "#ffffff",
+        "content_width": 1040,
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
+    },
+    "ts_catagory_aCthEi": {
+      "type": "ts-catagory",
+      "blocks": {
+        "category_FTqXjL": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/MAGYX_Site_For_Him.webp",
+            "title": "Till Honom",
+            "link": ""
+          }
+        },
+        "category_eLXdGH": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/MAGYX_Site_For_Her.webp",
+            "title": "Till Henne",
+            "link": ""
+          }
+        },
+        "category_bLBmFB": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/MAGYX_Site_Unisex.webp",
+            "title": "Unisex",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "category_FTqXjL",
+        "category_eLXdGH",
+        "category_bLBmFB"
+      ],
+      "name": "TryScent Categories",
+      "settings": {
+        "heading": "",
+        "background_color": "#fcfbf9",
+        "content_width": 840,
+        "card_gap": 30,
+        "card_radius": 8,
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
+    "features_block_gYzd6k": {
+      "type": "features-block",
+      "blocks": {
+        "feature_8aBb4g": {
+          "type": "feature",
+          "settings": {
+            "title": "Inspirerad av lyxikoner",
+            "subtitle": "utan de uppblåsta prislapparna"
+          }
+        },
+        "feature_tcRGhd": {
+          "type": "feature",
+          "settings": {
+            "title": "Veganskaoch rena ingredienser",
+            "subtitle": "för fullständig trygghet."
+          }
+        },
+        "feature_Kbqkkx": {
+          "type": "feature",
+          "settings": {
+            "title": "Dofter som varar heladagen",
+            "subtitle": "Och hänger med under dina mest aktivatimmar."
+          }
+        },
+        "feature_hFb3nC": {
+          "type": "feature",
+          "settings": {
+            "title": "Ministorlekar att testaförst",
+            "subtitle": "Testa på din hud först. Så att du är 100%säker innan du satsar på en hel flaska."
+          }
+        },
+        "feature_qrLYMj": {
+          "type": "feature",
+          "settings": {
+            "title": "60dagars nöjdhetsgaranti.",
+            "subtitle": "ifall det inte är kärlek vid första doften."
+          }
+        }
+      },
+      "block_order": [
+        "feature_8aBb4g",
+        "feature_tcRGhd",
+        "feature_Kbqkkx",
+        "feature_hFb3nC",
+        "feature_qrLYMj"
+      ],
+      "name": "TryScent Features Block",
+      "settings": {
+        "heading": "Vad gör TryScent annorlunda?",
+        "heading_size": 30,
+        "heading_color": "#121212",
+        "image": "shopify://shop_images/MAGYX_Site_Showcase.png",
+        "image_radius": 16,
+        "badge_color": "#146b32",
+        "badge_icon_color": "#ffffff",
+        "feature_title_size": 18,
+        "feature_title_color": "#121212",
+        "feature_sub_size": 16,
+        "feature_sub_color": "#4b4b4b",
+        "background_color": "#ffffff",
+        "content_width": 1040,
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
+    },
+    "ts_review_wall_FTieKq": {
+      "type": "ts-review-wall",
+      "blocks": {
+        "review_card_6HD3CC": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/jamelia.webp",
+            "author_name": "Jamillah G.",
+            "is_verified": true,
+            "rating": 4,
+            "date_text": "för 4 månader sedan",
+            "review_text": "Omg jag älskade den, wow! Precis som originalet och den håller hela dagen! ❤️🔥",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_nE99cV": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/ugc15.webp",
+            "author_name": "Castillo B.",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 3 månader sedan",
+            "review_text": "\"Den luktar väldigt gott, jag älskade den.\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_dKkTkf": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/ugc1.webp",
+            "author_name": "Juliana B",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 4 månader sedan",
+            "review_text": "\"Fantastiskt varumärke och fantastiska produkter!\"",
+            "product_image": "shopify://shop_images/MAGYX_PARFUM_659_c_2979e8f6-ab4a-4ac0-bebd-230be79d7c85.webp",
+            "product_title": "3X 50ml Parfymflaskor",
+            "product_subtitle": "Inspirerad av"
+          }
+        },
+        "review_card_8jW76x": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/beatricedcastle_2.webp",
+            "author_name": "Christine N.",
+            "is_verified": true,
+            "rating": 4,
+            "date_text": "för 5 dagar sedan",
+            "review_text": "\" Jag ääälskar de här parfymerna!!! Varenda en jag fick doftar gudomligt. Vissa skulle jag säga är bättre än originalet. Jag har dessutom tre till på väg tack vare deras bundelerbjudanden. Om du vill ha något som fungerar med en budget och levererar prestanda i designerklass kan jag inte rekommendera dem nog.\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_HacCj8": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/2026-07-02_16h57_29.webp",
+            "author_name": "Terence M.",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 2månader sedan",
+            "review_text": "\"Den luktar väldigt gott men håller inte så länge som den borde.\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_B3giTK": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/Chiara_Onorini_2.webp",
+            "author_name": "Lidis A.",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 2 månader sedan",
+            "review_text": "\"Den är perfekt och vacker 🥰🥰🥰\"",
+            "product_title": "3X 50ml Parfymflaskor",
+            "product_subtitle": "Inspirerad av"
+          }
+        },
+        "review_card_dbKjgH": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/ugc3.webp",
+            "author_name": "Roxanne S",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 5 månader sedan",
+            "review_text": "\"Produkten kom fram fint. Parfymen var inte trasig, läckte inte och var i gott skick. Doften är perfekt och luktade inte illa. Jag älskar den, hög kvalitet. Jag har dessutom tre till på väg tack vare deras bundelerbjudanden. Om du vill ha något som fungerar med en budget och levererar prestanda i designerklass kan jag inte rekommendera dem nog.\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_r4xgEy": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "author_name": "Alina M",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 5 månader sedan",
+            "review_text": "\"Jag är nöjd med TryScent. Doften luktar väldigt likt originalet och håller bra. Förpackningen är snygg och flaskan ser fin ut. Överlag är det ett jättebra alternativ om du vill ha en kvalitetsdoft till ett rimligt pris.\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_U3TdQg": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/robinson.webp",
+            "author_name": "Robinson D.",
+            "is_verified": true,
+            "rating": 4,
+            "date_text": "för 4 månader sedan",
+            "review_text": "\"Luktar precis som Luna Rossa Carbon, men är mycket billigare. Kan inte fatta hur lik den är.\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_8FRg96": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/Carolina_Maresca_1.webp",
+            "author_name": "Clara P.",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 2 dagar sedan",
+            "review_text": "\"Alla tre dofterna jag fick är väldigt bra. De håller länge och luktar som de ska. Det enda jag inte var nöjd med var tiden det tog att få dem. Men ärligt talat gjorde jag en andra beställning, så räkna bara med lite väntetid. Haha!\n\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_e9QBfe": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/WhatsApp_Image_2026-09-09_at_8.35.58_AM_1.webp",
+            "author_name": "Killian P.",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 1 dag sedan",
+            "review_text": "\"Detta är mitt första köp och jag är fast. Jag kommer aldrig att köpa parfym någon annanstans igen. Jag har aldrig kunnat hitta en dupe-doft som verkligen luktade autentiskt och konsekvent.\"",
+            "product_title": "3X 50ml Parfymflaskor",
+            "product_subtitle": "Inspirerad av"
+          }
+        },
+        "review_card_RmxhdX": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/2026-07-02_16h41_42.webp",
+            "author_name": "Lionel M.",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 7 dagar sedan",
+            "review_text": "\"Först var jag orolig eftersom leveransen blev lite försenad, men när jag väl fick dem blev jag helt imponerad av doften. När den har lagt sig, herregud, då är den bara fantastisk.\"",
+            "product_title": "3X 50ml Parfymflaskor",
+            "product_subtitle": "Inspirerad av"
+          }
+        },
+        "review_card_Gmzc4f": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/2026-07-02_16h34_24.webp",
+            "author_name": "Astrid",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 4 månader sedan",
+            "review_text": "\"Jag är väldigt intresserad av cologne så jag är ganska kräsen när det gäller kloner, men TryScent vann verkligen över mig helt. Jag beställde först Sauvage-klonen från startsidan och kände igen doften direkt när jag sprayade. Nu äger jag totalt fyra TryScent-dofter och jag älskar dem allihop. Jag har dessutom tre till på väg tack vare deras bundelerbjudanden. Om du vill ha något som fungerar med en budget och levererar prestanda i designerklass kan jag inte rekommendera dem nog.\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_9n3p83": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/pinkm.png",
+            "author_name": "Rosa B",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 7 månader sedan",
+            "review_text": "\"Väldigt bra varumärke, jag älskar förpackningen och doften.\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_wJqye3": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/Camila_Sena_Oliveira.png",
+            "author_name": "Jenniffer W.",
+            "is_verified": true,
+            "rating": 4,
+            "date_text": "för 2 dagar sedan",
+            "review_text": "\"Det här är den bästa doften jag har känt på väldigt länge, tonerna gör mig helt lycklig. Jag kommer att ha den här som en ständig favorit för alltid.\"",
+            "product_title": "3X 50ml Parfymflaskor",
+            "product_subtitle": "Inspirerad av"
+          }
+        },
+        "review_card_heWyjr": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/Camila_Sena_Oliveira_2.webp",
+            "author_name": "Michael T.",
+            "is_verified": true,
+            "rating": 4,
+            "date_text": "för 2 dag sedan",
+            "review_text": "\"Jag visste inte riktigt vad jag skulle förvänta mig, men det här imponerade verkligen på mig. Den luktar superfräscht och är ärligt talat ganska nära Aventus. Den håller bra och priset är mycket bättre.\"",
+            "product_title": "3X 50ml Parfymflaskor",
+            "product_subtitle": "Inspirerad av"
+          }
+        },
+        "review_card_RrLVmt": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/Carolina_Maresca_3.webp",
+            "author_name": "Eliannys Y",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 7 månader sedan",
+            "review_text": "\"Doften på den här parfymen är superrik och jag älskar hur vacker flaskan är och dess design. Jag skulle absolut använda den igen.\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_VfdheP": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "author_name": "Kamila G.",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 3 månader sedan",
+            "review_text": "\"Parfymerna doftar perfekt, dofterna sitter kvar väldigt länge, fantastisk kvalitet.\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_dzyc8V": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/Ana_Gandarez.webp",
+            "author_name": "Michael T.",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 4 månader sedan",
+            "review_text": "\"Det här är den typen av doft som får dig att känna dig välfixad. Inte för stark, bara helt rätt. 👌\"",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_eVYFpN": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/2026-07-02_16h58_13.webp",
+            "author_name": "Alvarez P.",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 4 månader sedan",
+            "review_text": "\"Jag har använt Creed Aventus i flera år, men det här är den närmaste dupe jag har hittat, och till en bråkdel av priset. Kombinationen av ananas och vanilj sitter helt rätt.\"",
+            "product_title": "3X 50ml Parfymflaskor",
+            "product_subtitle": "Inspirerad av"
+          }
+        },
+        "review_card_Bc6xKq": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/Anastasiia_Komisarova.webp",
+            "author_name": "Amanda G.",
+            "is_verified": true,
+            "rating": 4,
+            "date_text": "för 5 månader sedan",
+            "review_text": "Deras produkter håller bra kvalitet till ett väldigt överkomligt pris.",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_ry9Jce": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/Magyx_248.webp",
+            "author_name": "Gabriella K",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 7 månader sedan",
+            "review_text": "Efter en liten försening har jag äntligen fått mina TryScent-parfymer och de är helt träffsäkra! Jag kan knappt tro hur lika de är originalen. Som referens köpte jag \\\"Ylang Ylang Rose Jasmine\\\" och \\\"Aldehydes Rose Sandalwood\\\" och de är verkligen vackra dofter.",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_KJK4jn": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/2026-07-02_16h49_01_3a977970-e2dc-4ad5-94ea-fafd0117caf8.webp",
+            "author_name": "Lucy R",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 4 månader sedan",
+            "review_text": "Underbar doft. Håller länge.\nSöt och varm. Bra och snabb leverans.\nKommer att köpa igen.",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_G7ayVL": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "author_name": "EM",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 4 månader sedan",
+            "review_text": "Fantastisk produkt! Ett superprisvärt alternativ till märkesparfymerna. Doften håller länge och du får verkligen mycket för pengarna.",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_c7UfpE": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/Carolina_Maresca_2.webp",
+            "author_name": "Damario R",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 7 månader sedan",
+            "review_text": "Fantastisk produkt, luktar otroligt gott. Jag får alltid folk som frågar om min doft och vad jag använder.",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_yVJhDM": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "image": "shopify://shop_images/2026-07-02_16h55_49.webp",
+            "author_name": "Anne E.",
+            "is_verified": true,
+            "rating": 4,
+            "date_text": "för 4 månader sedan",
+            "review_text": "Produkten kom fram fint. Parfymen var inte trasig, läckte inte och var i gott skick. Doften är perfekt och luktade inte illa. Jag älskar den, hög kvalitet.",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_YLkc3m": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "author_name": "Alex S.",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 6 månader sedan",
+            "review_text": "Fantastiska dofter, fantastiska produkter, inga problem.",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_y4ahRC": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "author_name": "Benjamin M",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 4 månader sedan",
+            "review_text": "Från service till produkt var upplevelsen fenomenal. Köper gärna igen när som helst.",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_CFHYHB": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "author_name": "Aleksandra M",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 7 månader sedan",
+            "review_text": "Jag gillar den! Jag gillar den här doften. Bra parfym.",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        },
+        "review_card_t8DpLG": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "author_name": "Hwan H",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 8 månader sedan",
+            "review_text": "I somras fick jag ett prov av Creed Aventus i present och jag gillade det verkligen, men jag hade inte råd med originalet så jag började leta efter dupes. Jag hittade TryScent och beställde \\\"Pineapple Smoke Vanilla\\\". Jag fick den på ungefär en vecka och den luktar riktigt gott, dessutom väldigt nära mitt originalprov. Jag är väldigt nöjd med produkten, särskilt för priset.",
+            "product_image": "shopify://shop_images/Imagination_LV_800x800_46a038a4-ba9e-47b6-b7e2-2f2f028ef3c4.webp",
+            "product_title": "3X 50ml Parfymflaskor",
+            "product_subtitle": "Inspirerad av"
+          }
+        },
+        "review_card_tRAFc3": {
+          "type": "review_card",
+          "settings": {
+            "layout_text_first": false,
+            "author_name": "Lauri E",
+            "is_verified": true,
+            "rating": 5,
+            "date_text": "för 8 månader sedan",
+            "review_text": "Jag testade deras 7,5 ml provdofter och till min förvåning gillade jag dem. Jag har beställt en andra omgång och den här gången tog jag de större flaskorna. Jag måste säga att jag fick mina beställningar i tid och att de levererade de dofter jag gillar!",
+            "product_title": "",
+            "product_subtitle": ""
+          }
+        }
+      },
+      "block_order": [
+        "review_card_6HD3CC",
+        "review_card_nE99cV",
+        "review_card_dKkTkf",
+        "review_card_8jW76x",
+        "review_card_HacCj8",
+        "review_card_B3giTK",
+        "review_card_dbKjgH",
+        "review_card_r4xgEy",
+        "review_card_U3TdQg",
+        "review_card_8FRg96",
+        "review_card_e9QBfe",
+        "review_card_RmxhdX",
+        "review_card_Gmzc4f",
+        "review_card_9n3p83",
+        "review_card_wJqye3",
+        "review_card_heWyjr",
+        "review_card_RrLVmt",
+        "review_card_VfdheP",
+        "review_card_dzyc8V",
+        "review_card_eVYFpN",
+        "review_card_Bc6xKq",
+        "review_card_ry9Jce",
+        "review_card_KJK4jn",
+        "review_card_G7ayVL",
+        "review_card_c7UfpE",
+        "review_card_yVJhDM",
+        "review_card_YLkc3m",
+        "review_card_y4ahRC",
+        "review_card_CFHYHB",
+        "review_card_t8DpLG",
+        "review_card_tRAFc3"
+      ],
+      "name": "TryScent Review Wall",
+      "settings": {
+        "heading": "Gå med 10 000+ nöjda kunder",
+        "show_rating_badge": true,
+        "rating_text": "4,9/5 baserat på 10 000+ recensioner",
+        "initial_items": 15,
+        "load_more_label": "VISA FLER RECENSIONER",
+        "content_width": 1140,
+        "card_gap": 8,
+        "card_radius": 10,
+        "background_color": "#ffffff",
+        "card_background": "#ffffff",
+        "border_color": "#e2e8f0",
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
+    },
+    "bestseller_link_bhUMrh": {
+      "type": "bestseller-link",
+      "blocks": {
+        "bestseller_link_ihBPXf": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Aventus",
+            "link": ""
+          }
+        },
+        "bestseller_link_L6x4aT": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Dior Sauvage",
+            "link": ""
+          }
+        },
+        "bestseller_link_BmmRTq": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Maison Francis Kurkdjian Baccarat Rouge 540",
+            "link": ""
+          }
+        },
+        "bestseller_link_hPP9KN": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Yves Saint Laurent Y",
+            "link": ""
+          }
+        },
+        "bestseller_link_3LkTmL": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Prada Paradoxe",
+            "link": ""
+          }
+        },
+        "bestseller_link_n6qktG": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Versace Eros",
+            "link": ""
+          }
+        },
+        "bestseller_link_LLxzmW": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Mugler Alien",
+            "link": ""
+          }
+        },
+        "bestseller_link_TFwW7b": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Giorgio Armani Emporio Armani She",
+            "link": ""
+          }
+        },
+        "bestseller_link_kHKWFF": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Giorgio Armani Si",
+            "link": ""
+          }
+        },
+        "bestseller_link_7Jjq8P": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Chanel N°5",
+            "link": ""
+          }
+        },
+        "bestseller_link_UX9xKf": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Valentino Donna Born in Roma",
+            "link": ""
+          }
+        },
+        "bestseller_link_QbGFk6": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "YSL Black Opium",
+            "link": ""
+          }
+        },
+        "bestseller_link_apj3jP": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Tom Ford Lost Cherry",
+            "link": ""
+          }
+        },
+        "bestseller_link_QKMiay": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Libre",
+            "link": ""
+          }
+        },
+        "bestseller_link_WXhB3D": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Tom Ford Noir Extreme",
+            "link": ""
+          }
+        },
+        "bestseller_link_rpEDLf": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Davidoff Cool Water",
+            "link": ""
+          }
+        },
+        "bestseller_link_7EwWBw": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Paco Rabanne 1 Million Elixir",
+            "link": ""
+          }
+        },
+        "bestseller_link_EctpTB": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Dior Sauvage Parfum",
+            "link": ""
+          }
+        },
+        "bestseller_link_tiL87G": {
+          "type": "bestseller_link",
+          "settings": {
+            "prefix": "Inspirerad av:",
+            "title": "Giorgio Armani Code",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "bestseller_link_ihBPXf",
+        "bestseller_link_L6x4aT",
+        "bestseller_link_BmmRTq",
+        "bestseller_link_hPP9KN",
+        "bestseller_link_3LkTmL",
+        "bestseller_link_n6qktG",
+        "bestseller_link_LLxzmW",
+        "bestseller_link_TFwW7b",
+        "bestseller_link_kHKWFF",
+        "bestseller_link_7Jjq8P",
+        "bestseller_link_UX9xKf",
+        "bestseller_link_QbGFk6",
+        "bestseller_link_apj3jP",
+        "bestseller_link_QKMiay",
+        "bestseller_link_WXhB3D",
+        "bestseller_link_rpEDLf",
+        "bestseller_link_7EwWBw",
+        "bestseller_link_EctpTB",
+        "bestseller_link_tiL87G"
+      ],
+      "name": "TryScent Bestsellers Bar",
+      "settings": {
+        "heading": "Våra bästsäljare",
+        "background_color": "#146b32",
+        "text_color": "#ffffff",
+        "link_color": "#ffffff",
+        "divider_color": "#ffffff",
+        "content_width": 1200,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "hero_section_pMf84e",
+    "benifit_section_fY4MKW",
+    "review_section_nMC4hC",
+    "product_list_6XK4EA",
+    "video_slider_ELKidm",
+    "product_list_wkepQh",
+    "ts_eu_standards_hjWdqL",
+    "ts_catagory_aCthEi",
+    "features_block_gYzd6k",
+    "ts_review_wall_FTieKq",
+    "bestseller_link_bhUMrh"
+  ]
+}

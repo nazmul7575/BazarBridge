@@ -1,0 +1,80 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "ts_footer_iBdJqA": {
+      "type": "ts-footer",
+      "name": "TryScent Footer",
+      "settings": {
+        "logo": "shopify://shop_images/catsoft-logo.svg",
+        "show_shop_follow": true,
+        "shop_follow_label": "Följ på shop",
+        "shop_follow_url": "",
+        "menu_1_title": "Om oss",
+        "menu_1": "",
+        "menu_2_title": "Information",
+        "menu_2": "",
+        "contact_title": "Contact",
+        "company_name": "MAGYX SP ZOO",
+        "company_address_1": "Marszałka Józefa Piłsudskiego 31,",
+        "company_address_2": "72-300 Gryfice, Poland",
+        "phone": "+18883736114",
+        "email": "hello@tryscent.co",
+        "background_color": "#121212",
+        "heading_color": "#ffffff",
+        "text_color": "#cccccc",
+        "link_hover_color": "#ffffff",
+        "content_width": 1100,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "ts_footer_bottom_jFaNWU": {
+      "type": "ts-footer-bottom",
+      "name": "TryScent Footer Bottom",
+      "settings": {
+        "show_payment_icons": true,
+        "payment_mode": "shopify",
+        "copyright_text": "TryScent Drivs av Shopify",
+        "show_powered_by": false,
+        "background_color": "#121212",
+        "text_color": "#a0aec0",
+        "content_width": 1100,
+        "padding_top": 24,
+        "padding_bottom": 24
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-1",
+        "newsletter_enable": true,
+        "newsletter_heading": "Subscribe to our emails",
+        "enable_follow_on_shop": true,
+        "show_social": true,
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "payment_enable": true,
+        "show_policy": true,
+        "margin_top": 0,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "ts_footer_iBdJqA",
+    "ts_footer_bottom_jFaNWU",
+    "footer"
+  ]
+}

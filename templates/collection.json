@@ -1,0 +1,47 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "ts_product_page_hero_section_U39XdL": {
+      "type": "ts-product-page-hero-section",
+      "name": "Product Hero Banner",
+      "settings": {
+        "bg_image": "shopify://shop_images/ts-hero-new.webp",
+        "heading": "Nya dofter",
+        "subheading": "Det senaste från TryScent.",
+        "paragraph_1": "Nya dofter inspirerade av parfymerna alla pratar om just nu.",
+        "paragraph_2": "Hitta din nästa favorit innan alla andra gör det.",
+        "button1_text": "",
+        "button1_link": "",
+        "button2_text": "",
+        "button2_link": ""
+      }
+    },
+    "main_collection_product_grid_pYe7jy": {
+      "type": "main-collection-product-grid",
+      "name": "TryScent Collection Grid",
+      "settings": {}
+    }
+  },
+  "order": [
+    "banner",
+    "ts_product_page_hero_section_U39XdL",
+    "main_collection_product_grid_pYe7jy"
+  ]
+}

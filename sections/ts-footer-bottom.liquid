@@ -1,0 +1,294 @@
+{% liquid
+  assign section_id = 'ts-footer-bottom-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="ts-footer-bottom"
+  style="
+    --ts-bg: {{ section.settings.background_color }};
+    --ts-top: {{ section.settings.padding_top }}px;
+    --ts-bottom: {{ section.settings.padding_bottom }}px;
+    --ts-max: {{ section.settings.content_width }}px;
+    --ts-text-color: {{ section.settings.text_color }};
+  "
+>
+  <div class="ts-footer-bottom__inner">
+    <!-- Center Content: Payment Badges & Copyright -->
+    <div class="ts-footer-bottom__center">
+      {% if section.settings.show_payment_icons %}
+        <div class="ts-footer-bottom__payments">
+          {% if section.settings.payment_mode == 'custom' or section.settings.payment_mode == 'both' %}
+            {% for block in section.blocks %}
+              <div class="ts-payment-icon" {{ block.shopify_attributes }}>
+                {% if block.settings.custom_icon != blank %}
+                  {{
+                    block.settings.custom_icon
+                    | image_url: width: 100
+                    | image_tag: loading: 'lazy', class: 'ts-payment-img', alt: block.settings.title
+                  }}
+                {% else %}
+                  <span
+                    class="ts-pay-badge"
+                    style="
+                      background: {{ block.settings.bg_color }};
+                      color: {{ block.settings.text_color }};
+                    "
+                  >
+                    {{ block.settings.title | escape }}
+                  </span>
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          {% if section.settings.payment_mode == 'shopify' or section.settings.payment_mode == 'both' %}
+            {% for type in shop.enabled_payment_types %}
+              <div class="ts-payment-icon">
+                {{ type | payment_type_svg_tag: class: 'ts-payment-svg' }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="ts-footer-bottom__copyright">
+        <small>
+          &copy; {{ 'now' | date: '%Y' }}, {{ section.settings.copyright_text | default: shop.name }}
+          {% if section.settings.show_powered_by %}
+            {{ powered_by_link }}
+          {% endif %}
+        </small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    background-color: var(--ts-bg);
+    color: var(--ts-text-color);
+    padding: var(--ts-top) 24px var(--ts-bottom);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-footer-bottom__inner {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #{{ section_id }} .ts-footer-bottom__center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  /* Payment Icons Container */
+  #{{ section_id }} .ts-footer-bottom__payments {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  #{{ section_id }} .ts-payment-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #{{ section_id }} .ts-payment-svg,
+  #{{ section_id }} .ts-payment-img {
+    height: 24px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 3px;
+  }
+
+  #{{ section_id }} .ts-pay-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Copyright Info */
+  #{{ section_id }} .ts-footer-bottom__copyright {
+    font-size: 11px;
+    color: var(--ts-text-color);
+    opacity: 0.8;
+  }
+
+  #{{ section_id }} .ts-footer-bottom__copyright a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  /* Mobile Responsive */
+  @media screen and (max-width: 768px) {
+    #{{ section_id }} .ts-footer-bottom__inner {
+      gap: 16px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "TryScent Footer Bottom",
+  "tag": "section",
+  "class": "section-tryscent-footer-bottom",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Payment Icon Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show Payment Icons",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "payment_mode",
+      "label": "Payment Icons Source",
+      "options": [
+        { "value": "custom", "label": "Custom Added Blocks Only" },
+        { "value": "shopify", "label": "Shopify Auto Settings Only" },
+        { "value": "both", "label": "Show Both Custom & Shopify Auto" }
+      ],
+      "default": "custom"
+    },
+    {
+      "type": "header",
+      "content": "Copyright Settings"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright Custom Text",
+      "default": "TryScent Drivs av Shopify"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_powered_by",
+      "label": "Show Powered by Shopify Link",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Colors & Layout"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#A0AEC0"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    }
+  ],
+  "blocks": [
+    {
+      "type": "payment_icon",
+      "name": "Payment Gateway Icon",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Gateway Name",
+          "default": "VISA"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Upload Custom Icon Image (SVG/PNG)"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Badge Background Color (if no image uploaded)",
+          "default": "#1A1F71"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Badge Text Color (if no image uploaded)",
+          "default": "#FFFFFF"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent Footer Bottom",
+      "blocks": [
+        { "type": "payment_icon", "settings": { "title": "ACH", "bg_color": "#FFFFFF", "text_color": "#121212" } },
+        { "type": "payment_icon", "settings": { "title": "Amazon", "bg_color": "#FFFFFF", "text_color": "#121212" } },
+        { "type": "payment_icon", "settings": { "title": "AMEX", "bg_color": "#006FCF", "text_color": "#FFFFFF" } },
+        { "type": "payment_icon", "settings": { "title": "Apple Pay", "bg_color": "#000000", "text_color": "#FFFFFF" } },
+        { "type": "payment_icon", "settings": { "title": "Diners", "bg_color": "#004A97", "text_color": "#FFFFFF" } },
+        { "type": "payment_icon", "settings": { "title": "Discover", "bg_color": "#F47C20", "text_color": "#FFFFFF" } },
+        { "type": "payment_icon", "settings": { "title": "G Pay", "bg_color": "#FFFFFF", "text_color": "#4285F4" } },
+        { "type": "payment_icon", "settings": { "title": "Mastercard", "bg_color": "#EB001B", "text_color": "#FFFFFF" } },
+        { "type": "payment_icon", "settings": { "title": "Shop Pay", "bg_color": "#5A31F4", "text_color": "#FFFFFF" } },
+        { "type": "payment_icon", "settings": { "title": "VISA", "bg_color": "#1A1F71", "text_color": "#FFFFFF" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

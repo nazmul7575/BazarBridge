@@ -1,0 +1,694 @@
+{% liquid
+  assign section_id = 'ts-comp-notes-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="ts-comp-notes-section"
+  style="
+    --ts-bg: {{ section.settings.background_color }};
+    --ts-top: {{ section.settings.padding_top }}px;
+    --ts-bottom: {{ section.settings.padding_bottom }}px;
+    --ts-max: {{ section.settings.content_width }}px;
+    --ts-gap: {{ section.settings.column_gap }}px;
+
+    /* Left Image Variables */
+    --ts-img-padding: {{ section.settings.left_img_padding }}px;
+    --ts-img-bg: {{ section.settings.left_img_bg }};
+    --ts-img-border-width: {{ section.settings.left_img_border_width }}px;
+    --ts-img-border-color: {{ section.settings.left_img_border_color }};
+    --ts-img-border-style: {{ section.settings.left_img_border_style }};
+    --ts-img-radius: {{ section.settings.left_img_radius }}px;
+    --ts-img-fit: {{ section.settings.left_img_fit }};
+    --ts-img-height: {% if section.settings.left_img_height_mode == 'fixed' %}{{ section.settings.left_img_custom_height }}px{% else %}100%{% endif %};
+
+    /* Right Side Color & Styling Variables */
+    --ts-overview-bg: {{ section.settings.overview_bg }};
+    --ts-overview-title-color: {{ section.settings.overview_title_color }};
+    --ts-overview-text-color: {{ section.settings.overview_text_color }};
+
+    --ts-card-bg: {{ section.settings.card_bg }};
+    --ts-card-border: {{ section.settings.card_border }};
+    --ts-card-radius: {{ section.settings.card_radius }}px;
+    --ts-type-color: {{ section.settings.type_color }};
+    --ts-ing-color: {{ section.settings.ing_color }};
+    --ts-divider-color: {{ section.settings.divider_color }};
+    --ts-desc-color: {{ section.settings.desc_color }};
+  "
+>
+  <div class="ts-comp-notes-container">
+    
+    <!-- LEFT COLUMN: Custom Image Graphic -->
+    <div class="ts-comp-col">
+      <div class="ts-comp-image-wrapper">
+        {% if section.settings.comparison_image != blank %}
+          {{
+            section.settings.comparison_image
+            | image_url: width: 1200
+            | image_tag:
+              loading: 'lazy',
+              class: 'ts-comp-single-img',
+              alt: section.settings.comparison_image_alt | default: 'MAGYX vs DE ANDRA comparison'
+          }}
+        {% else %}
+          <div class="ts-comp-placeholder">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <p>Upload comparison graphic image in Theme Editor</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Doftanalys Cards -->
+    <div class="ts-notes-col">
+      
+      <!-- Top Overview Card -->
+      {% if section.settings.show_overview %}
+        <div class="ts-notes-overview">
+          {% if section.settings.notes_title != blank %}
+            <h3 class="ts-notes-main-title">{{ section.settings.notes_title | escape }}</h3>
+          {% endif %}
+          <p class="ts-notes-summary">
+            {{ product.metafields.custom.fragrance_summary | default: section.settings.notes_summary }}
+          </p>
+        </div>
+      {% endif %}
+
+      <!-- Toppnoter Card -->
+      {% if section.settings.show_top_notes %}
+        <div class="ts-note-card">
+          <div class="ts-note-type">{{ section.settings.top_label | escape }}</div>
+          <div class="ts-note-content">
+            <div class="ts-note-ingredients">
+              {{ product.metafields.custom.top_notes | default: section.settings.top_ingredients }}
+            </div>
+            <div class="ts-note-divider"></div>
+            <p class="ts-note-desc">
+              {{ product.metafields.custom.top_notes_desc | default: section.settings.top_desc }}
+            </p>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Mellannoter Card -->
+      {% if section.settings.show_mid_notes %}
+        <div class="ts-note-card">
+          <div class="ts-note-type">{{ section.settings.mid_label | escape }}</div>
+          <div class="ts-note-content">
+            <div class="ts-note-ingredients">
+              {{ product.metafields.custom.middle_notes | default: section.settings.mid_ingredients }}
+            </div>
+            <div class="ts-note-divider"></div>
+            <p class="ts-note-desc">
+              {{ product.metafields.custom.middle_notes_desc | default: section.settings.mid_desc }}
+            </p>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Basnoter Card -->
+      {% if section.settings.show_base_notes %}
+        <div class="ts-note-card">
+          <div class="ts-note-type">{{ section.settings.base_label | escape }}</div>
+          <div class="ts-note-content">
+            <div class="ts-note-ingredients">
+              {{ product.metafields.custom.base_notes | default: section.settings.base_ingredients }}
+            </div>
+            <div class="ts-note-divider"></div>
+            <p class="ts-note-desc">
+              {{ product.metafields.custom.base_notes_desc | default: section.settings.base_desc }}
+            </p>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    padding: var(--ts-top) 24px var(--ts-bottom);
+    background: var(--ts-bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ts-comp-notes-container {
+    max-width: var(--ts-max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ts-gap);
+    align-items: stretch;
+  }
+
+  /* Left Column & Custom Image Styling */
+  #{{ section_id }} .ts-comp-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  #{{ section_id }} .ts-comp-image-wrapper {
+    width: 100%;
+    height: var(--ts-img-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--ts-img-padding);
+    background: var(--ts-img-bg);
+    border: var(--ts-img-border-width) var(--ts-img-border-style) var(--ts-img-border-color);
+    border-radius: var(--ts-img-radius);
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .ts-comp-single-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: var(--ts-img-fit);
+    border-radius: calc(var(--ts-img-radius) - var(--ts-img-padding));
+  }
+
+  #{{ section_id }} .ts-comp-placeholder {
+    width: 100%;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #94A3B8;
+    background: #FFFFFF;
+    border: 2px dashed #E2E8F0;
+    border-radius: var(--ts-img-radius);
+    text-align: center;
+    padding: 24px;
+  }
+
+  #{{ section_id }} .ts-comp-placeholder p {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Right Column (Doftanalys) */
+  #{{ section_id }} .ts-notes-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  /* Top Overview Box */
+  #{{ section_id }} .ts-notes-overview {
+    background: var(--ts-overview-bg);
+    padding: 24px 16px;
+    border-radius: var(--ts-card-radius);
+    text-align: center;
+  }
+
+  #{{ section_id }} .ts-notes-main-title {
+    font-size: {{ section.settings.notes_title_size }}px;
+    font-weight: 800;
+    margin: 0 0 10px;
+    color: var(--ts-overview-title-color);
+    letter-spacing: -0.01em;
+  }
+
+  #{{ section_id }} .ts-notes-summary {
+    font-size: {{ section.settings.body_text_size }}px;
+    line-height: 1.5;
+    color: var(--ts-overview-text-color);
+    margin: 0;
+  }
+
+  /* Note Cards */
+  #{{ section_id }} .ts-note-card {
+    background: var(--ts-card-bg);
+    border: 1px solid var(--ts-card-border);
+    border-radius: var(--ts-card-radius);
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 20px;
+    align-items: start;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+
+  #{{ section_id }} .ts-note-type {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    line-height: 1.3;
+  }
+
+  #{{ section_id }} .ts-note-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #{{ section_id }} .ts-note-ingredients {
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.6px;
+    color: #000000;
+    line-height: 1.45;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #d1d5db;
+  }
+
+  #{{ section_id }} .ts-note-desc {
+    font-size: {{ section.settings.body_text_size }}px;
+    line-height: 1.375;
+    color: #888888;
+    margin: 8px 0px 0px;
+  }
+
+  /* Responsive Mobile Layout */
+  @media screen and (max-width: 900px) {
+    #{{ section_id }} .ts-comp-notes-container {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    #{{ section_id }} .ts-comp-image-wrapper {
+      height: auto;
+    }
+
+    #{{ section_id }} .ts-comp-placeholder {
+      min-height: 320px;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    #{{ section_id }} {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    #{{ section_id }} .ts-note-card {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 18px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "TryScent Comparison Notes",
+  "tag": "section",
+  "class": "section-tryscent-comp-notes",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Left Image Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "comparison_image",
+      "label": "Upload Comparison Image"
+    },
+    {
+      "type": "text",
+      "id": "comparison_image_alt",
+      "label": "Image Alt Text",
+      "default": "MAGYX vs DE ANDRA comparison"
+    },
+    {
+      "type": "select",
+      "id": "left_img_fit",
+      "label": "Image Object Fit",
+      "options": [
+        { "value": "contain", "label": "Contain (Fit inside)" },
+        { "value": "cover", "label": "Cover (Fill completely)" }
+      ],
+      "default": "contain"
+    },
+    {
+      "type": "select",
+      "id": "left_img_height_mode",
+      "label": "Left Height Mode",
+      "options": [
+        { "value": "auto", "label": "Auto (Match Right Column)" },
+        { "value": "fixed", "label": "Custom Fixed Height" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "range",
+      "id": "left_img_custom_height",
+      "label": "Custom Fixed Height",
+      "min": 200,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 480
+    },
+    {
+      "type": "header",
+      "content": "Left Image Border & Padding"
+    },
+    {
+      "type": "range",
+      "id": "left_img_padding",
+      "label": "Image Inner Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "left_img_bg",
+      "label": "Wrapper Background Color",
+      "default": "transparent"
+    },
+    {
+      "type": "range",
+      "id": "left_img_border_width",
+      "label": "Border Width",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "left_img_border_style",
+      "label": "Border Style",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "solid", "label": "Solid" },
+        { "value": "dashed", "label": "Dashed" },
+        { "value": "dotted", "label": "Dotted" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "color",
+      "id": "left_img_border_color",
+      "label": "Border Color",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "range",
+      "id": "left_img_radius",
+      "label": "Image Border Radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Overview Box"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overview",
+      "label": "Show Overview Box",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "notes_title",
+      "label": "Section Title",
+      "default": "Doftanalys"
+    },
+    {
+      "type": "textarea",
+      "id": "notes_summary",
+      "label": "Summary Description",
+      "default": "Frisk och citrusig med livlig citron, kalabrisk bergamott och siciliansk apelsin, som ger en solig, elegant och sofistikerad inledning."
+    },
+    {
+      "type": "header",
+      "content": "Top Notes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_notes",
+      "label": "Show Top Notes Card",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "top_label",
+      "label": "Top Notes Label",
+      "default": "Toppnoter"
+    },
+    {
+      "type": "text",
+      "id": "top_ingredients",
+      "label": "Top Notes Ingredients",
+      "default": "Citron · Kalabrisk bergamott · Siciliansk apelsin"
+    },
+    {
+      "type": "textarea",
+      "id": "top_desc",
+      "label": "Top Notes Description",
+      "default": "Frisk och strålande med syrlig citron, aromatisk kalabrisk bergamott och saftig siciliansk apelsin som skapar en livlig, citrusfräsch och elegant öppning."
+    },
+    {
+      "type": "header",
+      "content": "Middle Notes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mid_notes",
+      "label": "Show Middle Notes Card",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "mid_label",
+      "label": "Middle Notes Label",
+      "default": "Mellannoter"
+    },
+    {
+      "type": "text",
+      "id": "mid_ingredients",
+      "label": "Middle Notes Ingredients",
+      "default": "Tunisisk neroli · Nigeriansk ingefära · Ceylonkanel"
+    },
+    {
+      "type": "textarea",
+      "id": "mid_desc",
+      "label": "Middle Notes Description",
+      "default": "Aromatisk och kryddig med frisk tunisisk neroli, livfull nigeriansk ingefära och varm ceylonkanel som skapar ett elegant, energiskt och sofistikerat hjärta."
+    },
+    {
+      "type": "header",
+      "content": "Base Notes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_base_notes",
+      "label": "Show Base Notes Card",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "base_label",
+      "label": "Base Notes Label",
+      "default": "Basnoter"
+    },
+    {
+      "type": "text",
+      "id": "base_ingredients",
+      "label": "Base Notes Ingredients",
+      "default": "Kinesiskt svart te · Ambroxan · Guajakträ · Olibanum"
+    },
+    {
+      "type": "textarea",
+      "id": "base_desc",
+      "label": "Base Notes Description",
+      "default": "Djup och sofistikerad med aromatiskt kinesiskt svart te, varm ambroxan, rökigt guajakträ och hartsartat olibanum som skapar ett elegant, mystiskt och långvarigt avslut."
+    },
+    {
+      "type": "header",
+      "content": "Color Customization"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background Color",
+      "default": "#FAFAFA"
+    },
+    {
+      "type": "color",
+      "id": "overview_bg",
+      "label": "Overview Box Background",
+      "default": "#EFF3EC"
+    },
+    {
+      "type": "color",
+      "id": "overview_title_color",
+      "label": "Overview Title Color",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "overview_text_color",
+      "label": "Overview Text Color",
+      "default": "#374151"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Cards Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Cards Border Color",
+      "default": "#F1F5F9"
+    },
+    {
+      "type": "color",
+      "id": "type_color",
+      "label": "Note Label Color",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "ing_color",
+      "label": "Ingredients Color",
+      "default": "#1F2937"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider Line Color",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "color",
+      "id": "desc_color",
+      "label": "Description Color",
+      "default": "#6B7280"
+    },
+    {
+      "type": "header",
+      "content": "Typography & Sizing"
+    },
+    {
+      "type": "range",
+      "id": "notes_title_size",
+      "label": "Overview Title Size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "label_text_size",
+      "label": "Note Label Size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "body_text_size",
+      "label": "Ingredients Size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "desc_text_size",
+      "label": "Description Size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Layout Spacing"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Border Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Max Width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1140
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column Gap",
+      "min": 12,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "TryScent Comparison Notes"
+    }
+  ]
+}
+{% endschema %}
